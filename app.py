@@ -11,7 +11,7 @@ st.set_page_config(
 st.title("Git 用語ミニ辞典")
 
 # ----------------------------------------
-# 右カラムに表示する Git の全体説明
+# 左カラムに表示する Git 全体説明
 # ----------------------------------------
 GIT_OVERVIEW = """
 ## ◆ OneDrive と Git の違い
@@ -112,7 +112,7 @@ GIT_OVERVIEW = """
 """
 
 # ----------------------------------------
-# 用語データ（中央で切り替わる）
+# 用語データ（右カラムで切り替わる）
 # ----------------------------------------
 TERMS = {
     "リポジトリ（repository）": {
@@ -179,42 +179,22 @@ TERMS = {
 }
 
 # ----------------------------------------
-# 3 カラム構成（中央を細く・右を広く）
+# 3 カラム構成
+# 左：Git説明（広め） / 中：用語選択（細め） / 右：用語解説（広め）
 # ----------------------------------------
-col_left, col_center, col_right = st.columns([1.2, 1.4, 1.8])
+col_left, col_center, col_right = st.columns([1.8, 0.8, 1.8])
 
 # ----------------------------------------
-# 左：用語選択（固定）
+# 左：Git全体の説明（固定＋スクロール）
 # ----------------------------------------
 with col_left:
-    st.subheader("用語を選択")
-    selected = st.radio(
-        "",
-        list(TERMS.keys()),
-        index=0
-    )
+    st.subheader("Git の基本説明")
 
-# ----------------------------------------
-# 中央：用語の説明（選択に応じて変わる）
-# ----------------------------------------
-with col_center:
-    term = TERMS[selected]
-    st.subheader(selected)
-    st.markdown(f"**意味：** {term['meaning']}")
-    st.markdown("---")
-    st.markdown(term["desc"])
-
-# ----------------------------------------
-# 右：Git全体の説明（固定＋スクロール表示）
-# ----------------------------------------
-with col_right:
-    st.subheader("Git の基本説明（固定）")
-
-    # ▼ CSS で高さ固定＋スクロール指定
+    # CSS で高さ固定＋スクロール指定
     scroll_area_style = """
     <style>
-    .scroll-area {
-        height: 600px;        /* ← 好きな高さにしてOK */
+    .scroll-area-left {
+        height: 600px;        /* ← 好きな高さに変更可 */
         overflow-y: scroll;
         padding-right: 10px;
         border: 1px solid #DDD;
@@ -223,4 +203,25 @@ with col_right:
     </style>
     """
     st.markdown(scroll_area_style, unsafe_allow_html=True)
-    st.markdown(f"<div class='scroll-area'>{GIT_OVERVIEW}</div>", unsafe_allow_html=True)
+    st.markdown(f"<div class='scroll-area-left'>{GIT_OVERVIEW}</div>", unsafe_allow_html=True)
+
+# ----------------------------------------
+# 中央：用語選択（固定）
+# ----------------------------------------
+with col_center:
+    st.subheader("用語を選択")
+    selected = st.radio(
+        "",
+        list(TERMS.keys()),
+        index=0
+    )
+
+# ----------------------------------------
+# 右：用語の説明（選択に応じて変わる）
+# ----------------------------------------
+with col_right:
+    term = TERMS[selected]
+    st.subheader(selected)
+    st.markdown(f"**意味：** {term['meaning']}")
+    st.markdown("---")
+    st.markdown(term["desc"])
