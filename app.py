@@ -28,9 +28,6 @@ st.markdown("""
         padding: 1.0rem 1.5rem;
         border-bottom: 1px solid #e5e7eb;
         margin-bottom: 0;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
     }
 
     .main-header h1 {
@@ -39,29 +36,41 @@ st.markdown("""
         color: #111827;
     }
 
-    /* 3カラム内側のスクロール領域（ここが重要） */
-    .left-pane,
-    .middle-pane,
-    .right-pane {
-        height: calc(100vh - 140px);  /* ヘッダー＋検索ボックス分を差し引き */
-        overflow-y: auto;
-        padding: 1.5rem;
-        box-sizing: border-box;
+    /* ---------------------------
+       column のレイアウト調整
+       1,2番目: 検索バー用（高さ指定なし）
+       3,4,5番目: 本体3カラム（高さ＋スクロール）
+       --------------------------- */
+
+    /* 検索バーの2カラム */
+    [data-testid="column"]:nth-of-type(1),
+    [data-testid="column"]:nth-of-type(2) {
+        padding: 0 1.5rem;
     }
 
-    .left-pane {
+    /* 本体3カラム（左・中・右） */
+    [data-testid="column"]:nth-of-type(3),
+    [data-testid="column"]:nth-of-type(4),
+    [data-testid="column"]:nth-of-type(5) {
+        padding: 1.5rem;
+        height: calc(100vh - 140px);  /* ヘッダー＋検索バー分を引く */
+        overflow-y: auto;
+        box-sizing: border-box;
         background-color: #ffffff;
+    }
+
+    /* 左カラム（Git説明） */
+    [data-testid="column"]:nth-of-type(3) {
         border-right: 1px solid #e5e7eb;
     }
 
-    .middle-pane {
+    /* 中央カラム（用語一覧） */
+    [data-testid="column"]:nth-of-type(4) {
         background-color: #f9fafb;
         border-right: 1px solid #e5e7eb;
     }
 
-    .right-pane {
-        background-color: #ffffff;
-    }
+    /* 右カラム（詳細）はデフォルトの白 */
 
     /* 用語リストのボタン */
     .term-button {
@@ -190,7 +199,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # ==============================
-# 用語データ
+# 用語データ（元のまま）
 # ==============================
 TERMS = [
     {
@@ -383,13 +392,13 @@ TERMS = [
 ]
 
 # ==============================
-# セッション状態の初期化
+# セッション状態
 # ==============================
-if 'selected_term_id' not in st.session_state:
-    st.session_state.selected_term_id = 'repository'
+if "selected_term_id" not in st.session_state:
+    st.session_state.selected_term_id = "repository"
 
-if 'search_query' not in st.session_state:
-    st.session_state.search_query = ''
+if "search_query" not in st.session_state:
+    st.session_state.search_query = ""
 
 # ==============================
 # ヘッダー
@@ -412,26 +421,24 @@ with search_col1:
         "🔍 用語を検索...",
         value=st.session_state.search_query,
         label_visibility="collapsed",
-        placeholder="用語を検索..."
+        placeholder="用語を検索...",
     )
     st.session_state.search_query = search_query
 
-# フィルタリング
 filtered_terms = [
-    term for term in TERMS
-    if search_query.lower() in term['name'].lower()
-    or search_query.lower() in term['short_description'].lower()
+    term
+    for term in TERMS
+    if search_query.lower() in term["name"].lower()
+    or search_query.lower() in term["short_description"].lower()
 ]
 
 # ==============================
 # 3カラムレイアウト
 # ==============================
-col_left, col_middle, col_right = st.columns([1.2, 1, 2])
+col1, col2, col3 = st.columns([1.2, 1, 2])
 
-# ---------- 左カラム：Gitの説明 ----------
-with col_left:
-    st.markdown('<div class="left-pane">', unsafe_allow_html=True)
-
+# 左カラム: Gitの説明
+with col1:
     st.markdown("### 🌿 Gitとは")
     st.markdown(
         "Gitは、ソースコードのバージョン管理システムです。"
@@ -514,20 +521,16 @@ with col_left:
             <h4 style="margin: 0 0 0.5rem 0; color: #92400e;">💡 学習のヒント</h4>
             <p style="margin: 0; font-size: 0.875rem; color: #92400e;">
                 最初は基本的なコマンド（add, commit, push, pull）から始めましょう。
-                実際に使いながら覚えるのが最も効果的です。
-                右側の用語リストから興味のある用語を選んで学習してください。
+                実際に使いながら覚えるのが最も効果的です。右側の用語リストから
+                興味のある用語を選んで学習してください。
             </p>
         </div>
         """,
         unsafe_allow_html=True,
     )
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# ---------- 中央カラム：用語一覧 ----------
-with col_middle:
-    st.markdown('<div class="middle-pane">', unsafe_allow_html=True)
-
+# 中央カラム: 用語リスト
+with col2:
     st.markdown("### 📋 用語一覧")
     st.markdown(
         f"<p style='color: #6b7280; font-size: 0.875rem;'>{len(filtered_terms)}件の用語</p>",
@@ -537,34 +540,27 @@ with col_middle:
     categories = ["基本概念", "基本操作", "応用操作", "トラブルシューティング"]
 
     for category in categories:
-        category_terms = [t for t in filtered_terms if t["category"] == category]
-        if not category_terms:
-            continue
+        category_terms = [term for term in filtered_terms if term["category"] == category]
 
-        st.markdown(
-            f"<div class='category-header'>{category}</div>",
-            unsafe_allow_html=True,
-        )
+        if category_terms:
+            st.markdown(
+                f"<div class='category-header'>{category}</div>",
+                unsafe_allow_html=True,
+            )
 
-        for term in category_terms:
-            is_selected = term["id"] == st.session_state.selected_term_id
-            # st.button自体の見た目はそのままにして、textだけ渡す
-            if st.button(
-                f"{term['name']}\n{term['short_description']}",
-                key=term["id"],
-                use_container_width=True,
-            ):
-                st.session_state.selected_term_id = term["id"]
-                st.experimental_rerun()
+            for term in category_terms:
+                if st.button(
+                    f"{term['name']}\n{term['short_description']}",
+                    key=term["id"],
+                    use_container_width=True,
+                ):
+                    st.session_state.selected_term_id = term["id"]
+                    st.experimental_rerun()
 
-    st.markdown("</div>", unsafe_allow_html=True)
-
-# ---------- 右カラム：用語詳細 ----------
-with col_right:
-    st.markdown('<div class="right-pane">', unsafe_allow_html=True)
-
+# 右カラム: 用語詳細
+with col3:
     selected_term = next(
-        (t for t in TERMS if t["id"] == st.session_state.selected_term_id),
+        (term for term in TERMS if term["id"] == st.session_state.selected_term_id),
         TERMS[0],
     )
 
@@ -611,16 +607,16 @@ with col_right:
         st.markdown("### 🔗 関連用語")
 
         related_terms_data = [
-            t for t in TERMS if t["id"] in selected_term["related_terms"]
+            term for term in TERMS if term["id"] in selected_term["related_terms"]
         ]
 
-        for related in related_terms_data:
+        for related_term in related_terms_data:
             if st.button(
-                f"{related['name']}\n{related['short_description']}",
-                key=f"related_{related['id']}",
+                f"{related_term['name']}\n{related_term['short_description']}",
+                key=f"related_{related_term['id']}",
                 use_container_width=True,
             ):
-                st.session_state.selected_term_id = related["id"]
+                st.session_state.selected_term_id = related_term["id"]
                 st.experimental_rerun()
 
     st.markdown("---")
@@ -636,5 +632,3 @@ with col_right:
         """,
         unsafe_allow_html=True,
     )
-
-    st.markdown("</div>", unsafe_allow_html=True)
