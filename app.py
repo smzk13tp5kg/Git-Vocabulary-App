@@ -9,6 +9,7 @@ st.set_page_config(
 )
 
 st.title("Git 用語ミニ辞典")
+st.write("「これって何のこと？どこで使うの？」という Git 用語を一覧・検索できるミニ辞典です。")
 
 # ----------------------------------------
 # 左カラムに表示する Git 全体説明
@@ -185,25 +186,11 @@ TERMS = {
 col_left, col_center, col_right = st.columns([1.8, 0.8, 1.8])
 
 # ----------------------------------------
-# 左：Git全体の説明（固定＋スクロール）
+# 左：Git全体の説明（固定）
 # ----------------------------------------
 with col_left:
     st.subheader("Git の基本説明")
-
-    # CSS で高さ固定＋スクロール指定
-    scroll_area_style = """
-    <style>
-    .scroll-area-left {
-        height: 600px;        /* ← 好きな高さに変更可 */
-        overflow-y: scroll;
-        padding-right: 10px;
-        border: 1px solid #DDD;
-        border-radius: 5px;
-    }
-    </style>
-    """
-    st.markdown(scroll_area_style, unsafe_allow_html=True)
-    st.markdown(f"<div class='scroll-area-left'>{GIT_OVERVIEW}</div>", unsafe_allow_html=True)
+    st.markdown(GIT_OVERVIEW)    # ★ HTMLラップせず、そのままMarkdownとして表示
 
 # ----------------------------------------
 # 中央：用語選択（固定）
@@ -225,4 +212,3 @@ with col_right:
     st.markdown(f"**意味：** {term['meaning']}")
     st.markdown("---")
     st.markdown(term["desc"])
-
