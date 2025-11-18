@@ -190,11 +190,11 @@ col_left, col_center, col_right = st.columns([1.8, 0.8, 1.8])
 with col_left:
     st.subheader("Git の基本説明")
     
-    # CSSスタイルを先に定義
+    # CSSでスクロール可能なコンテナを作成
     st.markdown(
         """
         <style>
-        .scroll-box {
+        div[data-testid="stMarkdownContainer"] > div {
             max-height: 600px;
             overflow-y: auto;
             padding: 15px;
@@ -207,20 +207,55 @@ with col_left:
         unsafe_allow_html=True,
     )
     
-    # スクロールボックス開始タグ
-    st.markdown('<div class="scroll-box">', unsafe_allow_html=True)
-    
-    # Markdownコンテンツ（通常のst.markdownで表示）
-    st.markdown(GIT_OVERVIEW)
-    
-    # スクロールボックス終了タグ
-    st.markdown('</div>', unsafe_allow_html=True)
+    # 通常のMarkdownで表示
+    with st.container():
+        st.markdown(GIT_OVERVIEW)
 
 # ----------------------------------------
 # 中央：用語選択（固定）
 # ----------------------------------------
 with col_center:
     st.subheader("用語を選択")
+    
+    # CSSでカテゴリー風のスタイルを適用
+    st.markdown(
+        """
+        <style>
+        /* ラジオボタン全体のスタイル */
+        div[data-testid="stRadio"] > div {
+            gap: 0 !important;
+        }
+        
+        /* 各ラジオボタン項目 */
+        div[data-testid="stRadio"] label {
+            display: block !important;
+            padding: 10px 15px !important;
+            border-bottom: 1px solid #DDD !important;
+            cursor: pointer !important;
+            transition: background-color 0.2s !important;
+        }
+        
+        /* ホバー時 */
+        div[data-testid="stRadio"] label:hover {
+            background-color: #F0F0F0 !important;
+        }
+        
+        /* 選択されている項目 */
+        div[data-testid="stRadio"] label:has(input:checked) {
+            background-color: #282828 !important;
+            color: white !important;
+            font-weight: bold !important;
+        }
+        
+        /* ラジオボタン本体を非表示 */
+        div[data-testid="stRadio"] input[type="radio"] {
+            display: none !important;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+    
     selected = st.radio(
         "",
         list(TERMS.keys()),
