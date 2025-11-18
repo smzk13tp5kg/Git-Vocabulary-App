@@ -492,11 +492,32 @@ Gitは、ソースコードのバージョン管理システムです。
             unsafe_allow_html=True,
         )
 
-    # 中央カラム：用語一覧
-    with col_mid:
-        st.subheader("📋 用語一覧")
-        st.caption(f"{len(filtered_terms)} 件ヒット")
+# 中央カラム：用語一覧
+with col_mid:
+    st.subheader("📋 用語一覧")
+    st.caption(f"{len(filtered_terms)} 件ヒット")
 
+    # ★ ラジオは「表示順の切り替え」にだけ使う（機能カウント用にもなる）
+    list_mode = st.radio(
+        "表示順",
+        options=["カテゴリ別", "名前順"],
+        horizontal=True,
+        key="list_mode",
+    )
+
+    if list_mode == "名前順":
+        # 名前順に並べてボタンで選択
+        terms_for_view = sorted(filtered_terms, key=lambda t: t["name"])
+        for term in terms_for_view:
+            if st.button(
+                f"{term['name']}：{term['short_description']}",
+                key=f"term_{term['id']}",
+                use_container_width=True,
+            ):
+                st.session_state.selected_term_id = term["id"]
+
+    else:
+        # カテゴリ別に表示して、各用語はボタンで選択
         for category in CATEGORIES:
             cat_terms = [t for t in filtered_terms if t["category"] == category]
             if not cat_terms:
@@ -507,28 +528,14 @@ Gitは、ソースコードのバージョン管理システムです。
                 unsafe_allow_html=True,
             )
 
-            # ラジオボタンで選択させる（st.radio の活用）
-            radio_labels = [
-                f"{t['name']}：{t['short_description']}" for t in cat_terms
-            ]
-            default_index = None
-            for idx, t in enumerate(cat_terms):
-                if t["id"] == st.session_state.selected_term_id:
-                    default_index = idx
-                    break
+            for term in cat_terms:
+                if st.button(
+                    f"{term['name']}：{term['short_description']}",
+                    key=f"term_{term['id']}",
+                    use_container_width=True,
+                ):
+                    st.session_state.selected_term_id = term["id"]
 
-            selected_label = st.radio(
-                f"{category} の用語",
-                options=radio_labels,
-                index=default_index if default_index is not None else 0,
-                key=f"radio_{category}",
-            )
-
-            # 選択されたラベルに対応するIDを反映
-            for t in cat_terms:
-                label = f"{t['name']}：{t['short_description']}"
-                if label == selected_label:
-                    st.session_state.selected_term_id = t["id"]
                     break
 
     # 右カラム：用語詳細
@@ -640,4 +647,5 @@ Gitやこの辞典を使って気づいたこと・疑問点・社内での運�
         st.success("✅ メモが保存されました（ブラウザを閉じるまでは保持されます）。")
     else:
         st.warning("まだメモがありません。学んだことを1行だけでも残しておくと、復習しやすくなります。")
+
 
