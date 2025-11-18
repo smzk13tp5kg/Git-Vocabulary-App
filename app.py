@@ -15,186 +15,197 @@ st.set_page_config(
 # ==============================
 st.markdown("""
 <style>
-    /* 全体コンテナの余白調整 */
-    .block-container {
-        padding-top: 1.5rem;
-        padding-bottom: 1rem;
-        max-width: 1600px;
-    }
+/* 画面全体のスクロールを止める */
+html, body {
+    height: 100%;
+    margin: 0;
+}
 
-    /* ヘッダースタイル */
-    .main-header {
-        background-color: white;
-        padding: 1.0rem 1.5rem;
-        border-bottom: 1px solid #e5e7eb;
-        margin-bottom: 0;
-    }
+/* Streamlitのメインビューコンテナのスクロールを止める */
+[data-testid="stAppViewContainer"] {
+    height: 100vh;
+    overflow: hidden;
+}
 
-    .main-header h1 {
-        margin: 0;
-        font-size: 1.25rem;
-        color: #111827;
-    }
+/* 全体コンテナの余白調整 */
+.block-container {
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+    max-width: 1600px;
+}
 
-    /* ---------------------------
-       column のレイアウト調整
-       1,2番目: 検索バー用（高さ指定なし）
-       3,4,5番目: 本体3カラム（高さ＋スクロール）
-       --------------------------- */
+/* ヘッダースタイル */
+.main-header {
+    background-color: white;
+    padding: 1.0rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 0;
+}
 
-    /* 検索バーの2カラム */
-    [data-testid="column"]:nth-of-type(1),
-    [data-testid="column"]:nth-of-type(2) {
-        padding: 0 1.5rem;
-    }
+.main-header h1 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #111827;
+}
 
-    /* 本体3カラム（左・中・右） */
-    [data-testid="column"]:nth-of-type(3),
-    [data-testid="column"]:nth-of-type(4),
-    [data-testid="column"]:nth-of-type(5) {
-        padding: 1.5rem;
-        height: calc(100vh - 140px);  /* ヘッダー＋検索バー分を引く */
-        overflow-y: auto;
-        box-sizing: border-box;
-        background-color: #ffffff;
-    }
+/* ---------------------------
+   column のレイアウト調整
+   1,2番目: 検索バー用（高さ指定なし）
+   3,4,5番目: 本体3カラム（高さ＋スクロール）
+   --------------------------- */
 
-    /* 左カラム（Git説明） */
-    [data-testid="column"]:nth-of-type(3) {
-        border-right: 1px solid #e5e7eb;
-    }
+/* 検索バーの2カラム */
+[data-testid="column"]:nth-of-type(1),
+[data-testid="column"]:nth-of-type(2) {
+    padding: 0 1.5rem;
+}
 
-    /* 中央カラム（用語一覧） */
-    [data-testid="column"]:nth-of-type(4) {
-        background-color: #f9fafb;
-        border-right: 1px solid #e5e7eb;
-    }
+/* 本体3カラム（左・中・右） */
+[data-testid="column"]:nth-of-type(3),
+[data-testid="column"]:nth-of-type(4),
+[data-testid="column"]:nth-of-type(5) {
+    padding: 1.5rem;
+    height: calc(100vh - 120px);  /* ヘッダー＋検索バーぶんの調整値 */
+    overflow-y: auto;             /* 各カラムごとのスクロール */
+    box-sizing: border-box;
+    background-color: #ffffff;
+}
 
-    /* 右カラム（詳細）はデフォルトの白 */
+/* 左カラム（Git説明） */
+[data-testid="column"]:nth-of-type(3) {
+    border-right: 1px solid #e5e7eb;
+}
 
-    /* 用語リストのボタン */
-    .term-button {
-        width: 100%;
-        text-align: left;
-        padding: 0.75rem 1rem;
-        margin-bottom: 0.5rem;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        background-color: white;
-        cursor: pointer;
-        transition: all 0.2s;
-        font-size: 0.875rem;
-    }
+/* 中央カラム（用語一覧） */
+[data-testid="column"]:nth-of-type(4) {
+    background-color: #f9fafb;
+    border-right: 1px solid #e5e7eb;
+}
 
-    .term-button:hover {
-        background-color: #f9fafb;
-        border-color: #3b82f6;
-    }
+/* 右カラム（詳細）はデフォルトの白 */
 
-    .term-button.selected {
-        background-color: #eff6ff;
-        border-color: #3b82f6;
-    }
+/* 用語リストのボタン */
+.term-button {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    background-color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+}
 
-    /* カテゴリーヘッダー */
-    .category-header {
-        color: #6b7280;
-        font-size: 0.875rem;
-        font-weight: 600;
-        margin-top: 1.5rem;
-        margin-bottom: 0.5rem;
-    }
+.term-button:hover {
+    background-color: #f9fafb;
+    border-color: #3b82f6;
+}
 
-    /* 情報ボックス */
-    .info-box {
-        padding: 1rem;
-        border-radius: 0.5rem;
-        margin-bottom: 1rem;
-    }
+.term-button.selected {
+    background-color: #eff6ff;
+    border-color: #3b82f6;
+}
 
-    .info-box.blue {
-        background-color: #eff6ff;
-        border: 1px solid #bfdbfe;
-    }
+/* カテゴリーヘッダー */
+.category-header {
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
 
-    .info-box.green {
-        background-color: #f0fdf4;
-        border: 1px solid #bbf7d0;
-    }
+/* 情報ボックス */
+.info-box {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+}
 
-    .info-box.purple {
-        background-color: #faf5ff;
-        border: 1px solid #e9d5ff;
-    }
+.info-box.blue {
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+}
 
-    .info-box.amber {
-        background-color: #fffbeb;
-        border: 1px solid #fde68a;
-    }
+.info-box.green {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+}
 
-    /* コードブロック */
-    .code-block {
-        background-color: #1e293b;
-        color: #e2e8f0;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        font-family: monospace;
-        margin-bottom: 0.75rem;
-        font-size: 0.875rem;
-    }
+.info-box.purple {
+    background-color: #faf5ff;
+    border: 1px solid #e9d5ff;
+}
 
-    /* タグ */
-    .tag {
-        display: inline-block;
-        padding: 0.25rem 0.75rem;
-        background-color: #eff6ff;
-        color: #2563eb;
-        border-radius: 0.25rem;
-        font-size: 0.875rem;
-        margin-bottom: 0.75rem;
-    }
+.info-box.amber {
+    background-color: #fffbeb;
+    border: 1px solid #fde68a;
+}
 
-    /* ワークフローステップ */
-    .workflow-step {
-        display: flex;
-        gap: 0.75rem;
-        margin-bottom: 0.75rem;
-    }
+/* コードブロック */
+.code-block {
+    background-color: #1e293b;
+    color: #e2e8f0;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    font-family: monospace;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+}
 
-    .step-number {
-        width: 1.5rem;
-        height: 1.5rem;
-        background-color: #dbeafe;
-        color: #2563eb;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.875rem;
-        flex-shrink: 0;
-    }
+/* タグ */
+.tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #eff6ff;
+    color: #2563eb;
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    margin-bottom: 0.75rem;
+}
 
-    /* 関連用語カード */
-    .related-term {
-        background-color: white;
-        border: 1px solid #e5e7eb;
-        border-radius: 0.5rem;
-        padding: 1rem;
-        margin-bottom: 0.75rem;
-        cursor: pointer;
-        transition: all 0.2s;
-    }
+/* ワークフローステップ */
+.workflow-step {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
 
-    .related-term:hover {
-        background-color: #f9fafb;
-        border-color: #3b82f6;
-    }
+.step-number {
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: #dbeafe;
+    color: #2563eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
 
-    /* 検索ボックス */
-    .stTextInput > div > div > input {
-        border-radius: 0.5rem;
-    }
+/* 関連用語カード */
+.related-term {
+    background-color: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
 
+.related-term:hover {
+    background-color: #f9fafb;
+    border-color: #3b82f6;
+}
+
+/* 検索ボックス */
+.stTextInput > div > div > input {
+    border-radius: 0.5rem;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -632,3 +643,4 @@ with col3:
         """,
         unsafe_allow_html=True,
     )
+
