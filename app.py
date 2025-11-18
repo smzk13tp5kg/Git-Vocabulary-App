@@ -190,25 +190,31 @@ col_left, col_center, col_right = st.columns([1.8, 0.8, 1.8])
 with col_left:
     st.subheader("Git の基本説明")
     
-    # HTMLでMarkdownをラップしてスクロール可能にする
+    # CSSスタイルを先に定義
     st.markdown(
-        f"""
+        """
         <style>
-        .scroll-box {{
+        .scroll-box {
             max-height: 600px;
             overflow-y: auto;
             padding: 15px;
             border: 1px solid #DDD;
             border-radius: 5px;
             background-color: #FAFAFA;
-        }}
+        }
         </style>
-        <div class="scroll-box">
-        {GIT_OVERVIEW}
-        </div>
         """,
         unsafe_allow_html=True,
     )
+    
+    # スクロールボックス開始タグ
+    st.markdown('<div class="scroll-box">', unsafe_allow_html=True)
+    
+    # Markdownコンテンツ（通常のst.markdownで表示）
+    st.markdown(GIT_OVERVIEW)
+    
+    # スクロールボックス終了タグ
+    st.markdown('</div>', unsafe_allow_html=True)
 
 # ----------------------------------------
 # 中央：用語選択（固定）
