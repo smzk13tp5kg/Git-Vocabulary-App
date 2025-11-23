@@ -305,17 +305,17 @@ TERMS = [
 CATEGORIES = ["基本概念", "基本操作", "応用操作", "トラブルシューティング"]
 
 # ==============================
-# 学習ノート（Supabase Learningnotice）
+# 学習ノート（Supabase learning_notes）
 # ==============================
 def save_learning_note_to_supabase(note_text: str) -> None:
-    """Learningnotice テーブルにノートを1件追加"""
-    supabase.table("Learningnotice").insert({"note_text": note_text}).execute()
+    """learning_notes テーブルにノートを1件追加"""
+    supabase.table("learning_notes").insert({"note_text": note_text}).execute()
 
 
 def load_learning_notes_from_supabase(limit: int = 50) -> List[Dict]:
-    """Learningnotice テーブルからノート履歴を取得（新しい順）"""
+    """learning_notes テーブルからノート履歴を取得（新しい順）"""
     res = (
-        supabase.table("Learningnotice")
+        supabase.table(learning_notes")
         .select("*")              # カラム名に依存しない
         .order("id", desc=True)   # idの降順で新しいものから
         .limit(limit)
@@ -569,7 +569,7 @@ Gitは、ソースコードのバージョン管理システムです。
             """
 Git やこの辞典を使って気づいたこと・疑問点・
 社内での運用アイデアなどを自由にメモできます。  
-「ノートを保存」を押すと Supabase の Learningnotice テーブルに蓄積されます。
+「ノートを保存」を押すと Supabase の learning_notes テーブルに蓄積されます。
 """
         )
 
@@ -582,7 +582,7 @@ Git やこの辞典を使って気づいたこと・疑問点・
         if st.button("✏️ ノートを保存"):
             if new_note.strip():
                 save_learning_note_to_supabase(new_note.strip())
-                st.success("Supabase の Learningnotice テーブルに保存しました。")
+                st.success("Supabase の learning_notes テーブルに保存しました。")
                 st.session_state.learning_note_input = ""
             else:
                 st.warning("テキストを入力してください。")
@@ -592,7 +592,7 @@ Git やこの辞典を使って気づいたこと・疑問点・
 
         notes = load_learning_notes_from_supabase(limit=50)
         if not notes:
-            st.info("まだ Learningnotice にノートがありません。最初の1件を書いてみましょう。")
+            st.info("まだ learning_notes にノートがありません。最初の1件を書いてみましょう。")
         else:
             for row in notes:
                 created_at = row.get("created_at") or row.get("inserted_at")
@@ -730,3 +730,4 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
