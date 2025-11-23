@@ -380,24 +380,30 @@ with st.sidebar:
     st.caption("選択中の用語に対する自分用メモ")
 
     current_id = st.session_state.selected_term_id
-    current_memo = st.session_state.term_memos.get(current_id, "")
+current_memo = st.session_state.term_memos.get(current_id, "")
 
-    memo_text = st.text_area(
-        "この用語の社内での使い方・注意点",
-        value=current_memo,
-        height=120,
-        key=f"memo_{current_id}",
-    )
+memo_text = st.text_area(
+    "この用語の社内での使い方・注意点",
+    value=current_memo,
+    height=120,
+    key=f"memo_{current_id}",
+)
 
-    # セッションを更新
-    st.session_state.term_memos[current_id] = memo_text
+# セッションを更新
+st.session_state.term_memos[current_id] = memo_text
 
-    if st.button("💾 メモを保存", key=f"save_{current_id}"):
-        if memo_text.strip():
-            save_term_memo(current_id, memo_text.strip())
-            st.success("Supabase にメモを保存しました。")
-        else:
-            st.warning("メモが空です。何か入力してから保存してください。")
+if st.button("💾 メモを保存", key=f"save_{current_id}"):
+    if memo_text.strip():
+        save_term_memo(current_id, memo_text.strip())
+
+        # 入力内容をクリア
+        st.session_state.term_memos[current_id] = ""
+        st.session_state[f"memo_{current_id}"] = ""
+
+        st.success("Supabase にメモを保存しました。")
+    else:
+        st.warning("メモが空です。何か入力してから保存してください。")
+
 
     st.markdown("---")
     st.caption("このアプリについてのフィードバック（ダミー）")
@@ -703,5 +709,6 @@ Gitやこの辞典を使って気づいたこと・疑問点・社内での運�
 # 一時テスト
 test = supabase.table("term_memos").select("*").execute()
 print("TEST SELECT:", test)
+
 
 
