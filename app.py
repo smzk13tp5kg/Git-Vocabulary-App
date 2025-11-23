@@ -315,9 +315,9 @@ def save_learning_note_to_supabase(note_text: str) -> None:
 def load_learning_notes_from_supabase(limit: int = 50) -> List[Dict]:
     """learning_notes テーブルからノート履歴を取得（新しい順）"""
     res = (
-        supabase.table(learning_notes")
-        .select("*")              # カラム名に依存しない
-        .order("id", desc=True)   # idの降順で新しいものから
+        supabase.table("learning_notes")
+        .select("*")
+        .order("id", desc=True)  # id 降順で新しい順
         .limit(limit)
         .execute()
     )
@@ -595,7 +595,7 @@ Git やこの辞典を使って気づいたこと・疑問点・
             st.info("まだ learning_notes にノートがありません。最初の1件を書いてみましょう。")
         else:
             for row in notes:
-                created_at = row.get("created_at") or row.get("inserted_at")
+                created_at = row.get("created_at")
                 if created_at:
                     date_str = str(created_at).replace("T", " ").split(".")[0][:16]
                 else:
@@ -730,4 +730,3 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
-
