@@ -160,4 +160,155 @@ TERMS = [
             "git merge feature/new-feature で現在のブランチにマージ",
             "git merge --no-ff でマージコミットを必ず作成",
         ],
-        "related_terms":_
+        "related_terms": ["branch", "conflict", "rebase"],
+    },
+    {
+        "id": "push",
+        "name": "プッシュ (Push)",
+        "category": "基本操作",
+        "short_description": "ローカルの変更をリモートに送信",
+        "full_description": "プッシュは、ローカルリポジトリのコミットをリモートリポジトリに送信する操作です。これにより、他の開発者と変更を共有できます。プッシュする前に、リモートの最新状態を取得（pull）することが推奨されます。",
+        "examples": [
+            "git push origin main でmainブランチをプッシュ",
+            "git push -u origin feature でブランチを初回プッシュ",
+        ],
+        "related_terms": ["pull", "remote", "commit"],
+    },
+    {
+        "id": "pull",
+        "name": "プル (Pull)",
+        "category": "基本操作",
+        "short_description": "リモートの変更をローカルに取り込む",
+        "full_description": "プルは、リモートリポジトリの変更をローカルリポジトリに取り込む操作です。fetch（取得）とmerge（統合）を同時に行います。チーム開発では、作業開始前に必ずpullして最新状態にすることが重要です。",
+        "examples": [
+            "git pull origin main でリモートの変更を取得",
+            "git pull --rebase でリベースしながら取得",
+        ],
+        "related_terms": ["push", "fetch", "merge"],
+    },
+    {
+        "id": "clone",
+        "name": "クローン (Clone)",
+        "category": "基本操作",
+        "short_description": "リモートリポジトリを複製",
+        "full_description": "クローンは、リモートリポジトリ全体をローカルにコピーする操作です。GitHubなどからプロジェクトをダウンロードして開発を始める際に使用します。履歴も含めて完全にコピーされます。",
+        "examples": [
+            "git clone https://github.com/user/repo.git",
+            "git clone git@github.com:user/repo.git でSSH経由でクローン",
+        ],
+        "related_terms": ["repository", "remote", "fetch"],
+    },
+    {
+        "id": "staging",
+        "name": "ステージング (Staging)",
+        "category": "基本概念",
+        "short_description": "コミット対象を準備するエリア",
+        "full_description": "ステージングエリア（インデックス）は、次のコミットに含める変更を準備する場所です。git addコマンドでファイルをステージングし、git commitで実際にコミットします。この仕組みにより、変更の一部だけをコミットすることができます。",
+        "examples": [
+            "git add file.txt で特定のファイルをステージング",
+            "git add . ですべての変更をステージング",
+            "git reset HEAD file.txt でステージングを取り消し",
+        ],
+        "related_terms": ["commit", "add", "status"],
+    },
+    {
+        "id": "conflict",
+        "name": "コンフリクト (Conflict)",
+        "category": "トラブルシューティング",
+        "short_description": "変更が競合している状態",
+        "full_description": "コンフリクトは、同じファイルの同じ箇所を異なる方法で変更した際に発生します。Gitが自動的にマージできない場合、手動で解決する必要があります。コンフリクトマーカー（<<<<<<<, =======, >>>>>>>）が挿入されるので、どちらの変更を採用するか決定します。",
+        "examples": [
+            "コンフリクトマーカーを確認",
+            "必要な変更を残して不要な部分を削除",
+            "git add で解決済みをマーク",
+            "git commit でマージを完了",
+        ],
+        "related_terms": ["merge", "rebase", "diff"],
+    },
+    {
+        "id": "remote",
+        "name": "リモート (Remote)",
+        "category": "基本概念",
+        "short_description": "リモートリポジトリへの参照",
+        "full_description": "リモートは、ネットワーク上のリポジトリへの参照です。通常「origin」という名前が付けられます。複数のリモートを設定することも可能で、チーム開発では必須の概念です。",
+        "examples": [
+            "git remote -v でリモート一覧を表示",
+            "git remote add origin <URL> でリモートを追加",
+            "git remote rename old new で名前変更",
+        ],
+        "related_terms": ["push", "pull", "clone"],
+    },
+    {
+        "id": "fetch",
+        "name": "フェッチ (Fetch)",
+        "category": "基本操作",
+        "short_description": "リモートの情報を取得（マージはしない）",
+        "full_description": "フェッチは、リモートリポジトリの最新情報を取得しますが、ローカルのブランチには自動的にマージしません。pullと異なり、安全に確認してからマージできます。",
+        "examples": [
+            "git fetch origin でリモートの情報を取得",
+            "git fetch --all ですべてのリモートから取得",
+        ],
+        "related_terms": ["pull", "remote", "merge"],
+    },
+    {
+        "id": "rebase",
+        "name": "リベース (Rebase)",
+        "category": "応用操作",
+        "short_description": "コミット履歴を整理",
+        "full_description": "リベースは、コミット履歴を別のベース上に付け替える操作です。mergeと異なり、履歴を一直線に保つことができます。ただし、既に共有されているコミットには使用すべきではありません。",
+        "examples": [
+            "git rebase main で現在のブランチをmainの最新に付け替え",
+            "git rebase -i HEAD~3 で対話的にコミットを整理",
+        ],
+        "related_terms": ["merge", "commit", "interactive"],
+    },
+    {
+        "id": "stash",
+        "name": "スタッシュ (Stash)",
+        "category": "応用操作",
+        "short_description": "作業中の変更を一時退避",
+        "full_description": "スタッシュは、コミットせずに作業中の変更を一時的に退避させる機能です。ブランチを切り替える必要があるが、まだコミットしたくない場合に便利です。",
+        "examples": [
+            "git stash で変更を退避",
+            "git stash pop で退避した変更を復元",
+            "git stash list で退避一覧を表示",
+        ],
+        "related_terms": ["commit", "checkout", "branch"],
+    },
+    {
+        "id": "tag",
+        "name": "タグ (Tag)",
+        "category": "応用操作",
+        "short_description": "特定のコミットに印をつける",
+        "full_description": "タグは、特定のコミットに名前をつけて記録する機能です。主にリリースバージョンを記録するために使用されます（v1.0.0など）。軽量タグと注釈付きタグの2種類があります。",
+        "examples": [
+            "git tag v1.0.0 で軽量タグを作成",
+            'git tag -a v1.0.0 -m "Release 1.0" で注釈付きタグ',
+            "git push origin v1.0.0 でタグをプッシュ",
+        ],
+        "related_terms": ["commit", "release", "version"],
+    },
+    {
+        "id": "checkout",
+        "name": "チェックアウト (Checkout)",
+        "category": "基本操作",
+        "short_description": "ブランチやコミットを切り替える",
+        "full_description": "チェックアウトは、作業するブランチを切り替えたり、過去のコミットの状態を確認したりする操作です。Git 2.23以降では、switch（ブランチ切り替え）とrestore（ファイル復元）に分割されました。",
+        "examples": [
+            "git checkout main でmainブランチに切り替え",
+            "git checkout -b new-branch で新ブランチ作成と切り替え",
+            "git checkout <commit-id> で特定のコミットを確認",
+        ],
+        "related_terms": ["branch", "switch", "restore"],
+    },
+]
+
+CATEGORIES = ["基本概念", "基本操作", "応用操作", "トラブルシューティング"]
+
+
+# ==============================
+# 学習ノート（Supabase Learningnotice）
+# ==============================
+def save_learning_note_to_supabase(note_text: str) -> None:
+    """Learningnotice テーブルにノートを1件追加"""
+    supabase.ta
