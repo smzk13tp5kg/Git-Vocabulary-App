@@ -316,13 +316,11 @@ def load_term_memos_from_supabase():
 
 
 def save_term_memo(term_id: str, memo_text: str):
-    # term_id を一意キーとして upsert（同じ term_id が来たら上書き）
-    res = supabase.table("term_memos").upsert(
-        {"term_id": term_id, "memo_text": memo_text},
-        on_conflict="term_id",
+    res = supabase.table("term_memos").insert(
+        {"term_id": term_id, "memo_text": memo_text}
     ).execute()
-    # デバッグ用（動作確認後に消してOK）
-    print("UPSERT RESULT:", res)
+    print("INSERT RESULT:", res)
+
 
 
 # ==============================
@@ -705,4 +703,5 @@ Gitやこの辞典を使って気づいたこと・疑問点・社内での運�
 # 一時テスト
 test = supabase.table("term_memos").select("*").execute()
 print("TEST SELECT:", test)
+
 
