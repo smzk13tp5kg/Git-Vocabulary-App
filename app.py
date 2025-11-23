@@ -318,12 +318,13 @@ def load_learning_notes_from_supabase(limit: int = 50) -> List[Dict]:
     """Learningnotice テーブルからノート履歴を取得（新しい順）"""
     res = (
         supabase.table("Learningnotice")
-        .select("id, note_text, created_at")
-        .order("created_at", desc=True)
+        .select("*")              # ★ カラム名を固定しない
+        .order("id", desc=True)   # ★ created_at がなくても並び替え可能なように id でソート
         .limit(limit)
         .execute()
     )
     return res.data or []
+
 
 
 # ==============================
@@ -866,3 +867,4 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
