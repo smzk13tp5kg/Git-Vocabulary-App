@@ -1,4 +1,5 @@
 import os
+from typing import List, Dict
 
 import streamlit as st
 import pandas as pd
@@ -21,6 +22,7 @@ if not SUPABASE_URL or not SUPABASE_KEY:
     st.stop()
 
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 
 # ==============================
 # ページ設定
@@ -148,39 +150,195 @@ TERMS = [
         ],
         "related_terms": ["merge", "checkout", "main"],
     },
-    # ...（他の TERMS は元コードのまま省略）...
+    {
+        "id": "merge",
+        "name": "マージ (Merge)",
+        "category": "基本操作",
+        "short_description": "ブランチを統合すること",
+        "full_description": "マージは、異なるブランチの変更を統合する操作です。feature ブランチでの開発が完了したら、main ブランチにマージして変更を反映させます。自動的に統合できない場合はコンフリクトが発生し、手動で解決する必要があります。",
+        "examples": [
+            "git merge feature/new-feature で現在のブランチにマージ",
+            "git merge --no-ff でマージコミットを必ず作成",
+        ],
+        "related_terms": ["branch", "conflict", "rebase"],
+    },
+    {
+        "id": "push",
+        "name": "プッシュ (Push)",
+        "category": "基本操作",
+        "short_description": "ローカルの変更をリモートに送信",
+        "full_description": "プッシュは、ローカルリポジトリのコミットをリモートリポジトリに送信する操作です。これにより、他の開発者と変更を共有できます。プッシュする前に、リモートの最新状態を取得（pull）することが推奨されます。",
+        "examples": [
+            "git push origin main でmainブランチをプッシュ",
+            "git push -u origin feature でブランチを初回プッシュ",
+        ],
+        "related_terms": ["pull", "remote", "commit"],
+    },
+    {
+        "id": "pull",
+        "name": "プル (Pull)",
+        "category": "基本操作",
+        "short_description": "リモートの変更をローカルに取り込む",
+        "full_description": "プルは、リモートリポジトリの変更をローカルリポジトリに取り込む操作です。fetch（取得）とmerge（統合）を同時に行います。チーム開発では、作業開始前に必ずpullして最新状態にすることが重要です。",
+        "examples": [
+            "git pull origin main でリモートの変更を取得",
+            "git pull --rebase でリベースしながら取得",
+        ],
+        "related_terms": ["push", "fetch", "merge"],
+    },
+    {
+        "id": "clone",
+        "name": "クローン (Clone)",
+        "category": "基本操作",
+        "short_description": "リモートリポジトリを複製",
+        "full_description": "クローンは、リモートリポジトリ全体をローカルにコピーする操作です。GitHubなどからプロジェクトをダウンロードして開発を始める際に使用します。履歴も含めて完全にコピーされます。",
+        "examples": [
+            "git clone https://github.com/user/repo.git",
+            "git clone git@github.com:user/repo.git でSSH経由でクローン",
+        ],
+        "related_terms": ["repository", "remote", "fetch"],
+    },
+    {
+        "id": "staging",
+        "name": "ステージング (Staging)",
+        "category": "基本概念",
+        "short_description": "コミット対象を準備するエリア",
+        "full_description": "ステージングエリア（インデックス）は、次のコミットに含める変更を準備する場所です。git addコマンドでファイルをステージングし、git commitで実際にコミットします。この仕組みにより、変更の一部だけをコミットすることができます。",
+        "examples": [
+            "git add file.txt で特定のファイルをステージング",
+            "git add . ですべての変更をステージング",
+            "git reset HEAD file.txt でステージングを取り消し",
+        ],
+        "related_terms": ["commit", "add", "status"],
+    },
+    {
+        "id": "conflict",
+        "name": "コンフリクト (Conflict)",
+        "category": "トラブルシューティング",
+        "short_description": "変更が競合している状態",
+        "full_description": "コンフリクトは、同じファイルの同じ箇所を異なる方法で変更した際に発生します。Gitが自動的にマージできない場合、手動で解決する必要があります。コンフリクトマーカー（<<<<<<<, =======, >>>>>>>）が挿入されるので、どちらの変更を採用するか決定します。",
+        "examples": [
+            "コンフリクトマーカーを確認",
+            "必要な変更を残して不要な部分を削除",
+            "git add で解決済みをマーク",
+            "git commit でマージを完了",
+        ],
+        "related_terms": ["merge", "rebase", "diff"],
+    },
+    {
+        "id": "remote",
+        "name": "リモート (Remote)",
+        "category": "基本概念",
+        "short_description": "リモートリポジトリへの参照",
+        "full_description": "リモートは、ネットワーク上のリポジトリへの参照です。通常「origin」という名前が付けられます。複数のリモートを設定することも可能で、チーム開発では必須の概念です。",
+        "examples": [
+            "git remote -v でリモート一覧を表示",
+            "git remote add origin <URL> でリモートを追加",
+            "git remote rename old new で名前変更",
+        ],
+        "related_terms": ["push", "pull", "clone"],
+    },
+    {
+        "id": "fetch",
+        "name": "フェッチ (Fetch)",
+        "category": "基本操作",
+        "short_description": "リモートの情報を取得（マージはしない）",
+        "full_description": "フェッチは、リモートリポジトリの最新情報を取得しますが、ローカルのブランチには自動的にマージしません。pullと異なり、安全に確認してからマージできます。",
+        "examples": [
+            "git fetch origin でリモートの情報を取得",
+            "git fetch --all ですべてのリモートから取得",
+        ],
+        "related_terms": ["pull", "remote", "merge"],
+    },
+    {
+        "id": "rebase",
+        "name": "リベース (Rebase)",
+        "category": "応用操作",
+        "short_description": "コミット履歴を整理",
+        "full_description": "リベースは、コミット履歴を別のベース上に付け替える操作です。mergeと異なり、履歴を一直線に保つことができます。ただし、既に共有されているコミットには使用すべきではありません。",
+        "examples": [
+            "git rebase main で現在のブランチをmainの最新に付け替え",
+            "git rebase -i HEAD~3 で対話的にコミットを整理",
+        ],
+        "related_terms": ["merge", "commit", "interactive"],
+    },
+    {
+        "id": "stash",
+        "name": "スタッシュ (Stash)",
+        "category": "応用操作",
+        "short_description": "作業中の変更を一時退避",
+        "full_description": "スタッシュは、コミットせずに作業中の変更を一時的に退避させる機能です。ブランチを切り替える必要があるが、まだコミットしたくない場合に便利です。",
+        "examples": [
+            "git stash で変更を退避",
+            "git stash pop で退避した変更を復元",
+            "git stash list で退避一覧を表示",
+        ],
+        "related_terms": ["commit", "checkout", "branch"],
+    },
+    {
+        "id": "tag",
+        "name": "タグ (Tag)",
+        "category": "応用操作",
+        "short_description": "特定のコミットに印をつける",
+        "full_description": "タグは、特定のコミットに名前をつけて記録する機能です。主にリリースバージョンを記録するために使用されます（v1.0.0など）。軽量タグと注釈付きタグの2種類があります。",
+        "examples": [
+            "git tag v1.0.0 で軽量タグを作成",
+            'git tag -a v1.0.0 -m "Release 1.0" で注釈付きタグ',
+            "git push origin v1.0.0 でタグをプッシュ",
+        ],
+        "related_terms": ["commit", "release", "version"],
+    },
+    {
+        "id": "checkout",
+        "name": "チェックアウト (Checkout)",
+        "category": "基本操作",
+        "short_description": "ブランチやコミットを切り替える",
+        "full_description": "チェックアウトは、作業するブランチを切り替えたり、過去のコミットの状態を確認したりする操作です。Git 2.23以降では、switch（ブランチ切り替え）とrestore（ファイル復元）に分割されました。",
+        "examples": [
+            "git checkout main でmainブランチに切り替え",
+            "git checkout -b new-branch で新ブランチ作成と切り替え",
+            "git checkout <commit-id> で特定のコミットを確認",
+        ],
+        "related_terms": ["branch", "switch", "restore"],
+    },
 ]
 
 CATEGORIES = ["基本概念", "基本操作", "応用操作", "トラブルシューティング"]
 
-# ==============================
-# 学習ノート（Supabase 読み書き）
-# ==============================
 
+# ==============================
+# メモデータの読み込み／保存（Supabase）
+# ==============================
 @st.cache_data
-def load_learning_notes():
-    """
-    Supabase の learning_notes テーブルからノート一覧を取得
-    最新順に並べて返す
-    """
+def load_term_memos_from_supabase():
+    res = supabase.table("term_memos").select("term_id, memo_text").execute()
+    if not res.data:
+        return {}
+    # term_id -> memo_text の dict に変換
+    return {row["term_id"]: row["memo_text"] for row in res.data}
+
+
+def save_term_memo(term_id: str, memo_text: str):
+    # term_id に UNIQUE index を貼ってあるので upsert で上書きできる
+    supabase.table("term_memos").upsert(
+        {"term_id": term_id, "memo_text": memo_text}
+    ).execute()
+
+
+# ==============================
+# クイズ問題の読み込み（Supabase）
+# ==============================
+@st.cache_data
+def load_quiz_questions_from_supabase(limit: int = 5) -> List[Dict]:
+    """Supabase から Git クイズ問題を取得する"""
     res = (
-        supabase.table("learning_notes")
-        .select("id, note_text, created_at")
-        .order("created_at", desc=True)
+        supabase
+        .table("git_quiz_questions")
+        .select("*")
+        .limit(limit)
         .execute()
     )
     return res.data or []
-
-
-def save_learning_note(note_text: str):
-    """
-    Supabase に学習ノートを1件追記
-    """
-    supabase.table("learning_notes").insert(
-        {"note_text": note_text}
-    ).execute()
-    # 追記したのでキャッシュをクリア
-    load_learning_notes.clear()
 
 
 # ==============================
@@ -192,6 +350,12 @@ if "selected_term_id" not in st.session_state:
 if "search_query" not in st.session_state:
     st.session_state.search_query = ""
 
+if "term_memos" not in st.session_state:
+    # 起動時に Supabase からメモを読み込む
+    st.session_state.term_memos = load_term_memos_from_supabase()
+
+if "global_note" not in st.session_state:
+    st.session_state.global_note = ""
 
 
 # ==============================
@@ -215,13 +379,14 @@ with top_col2:
 
 st.info("💡 左のサイドバーから表示モードやフィルタ条件を変更できます。")
 
+
 # ==============================
-# サイドバー
+# サイドバー（機能いろいろ詰め込みゾーン）
 # ==============================
 with st.sidebar:
     st.subheader("⚙ 表示設定")
 
-    mode = st.radio("学習モード", options=["辞書モード", "クイズ準備中"], index=0)
+    mode = st.radio("学習モード", options=["辞書モード", "クイズモード"], index=0)
 
     category_filter = st.selectbox(
         "カテゴリフィルタ",
@@ -234,6 +399,29 @@ with st.sidebar:
     max_items = st.slider("最大表示件数", min_value=5, max_value=50, value=20, step=5)
 
     st.markdown("---")
+    st.caption("選択中の用語に対する自分用メモ")
+
+    current_id = st.session_state.selected_term_id
+    current_memo = st.session_state.term_memos.get(current_id, "")
+
+    memo_text = st.text_area(
+        "この用語の社内での使い方・注意点",
+        value=current_memo,
+        height=120,
+        key=f"memo_{current_id}",
+    )
+
+    # セッションを更新
+    st.session_state.term_memos[current_id] = memo_text
+
+    if st.button("💾 メモを保存", key=f"save_{current_id}"):
+        if memo_text.strip():
+            save_term_memo(current_id, memo_text.strip())
+            st.success("Supabase にメモを保存しました。")
+        else:
+            st.warning("メモが空です。何か入力してから保存してください。")
+
+    st.markdown("---")
     st.caption("このアプリについてのフィードバック（ダミー）")
 
     with st.form("feedback_form"):
@@ -244,112 +432,117 @@ with st.sidebar:
         if submitted:
             st.success("フィードバックありがとうございます！")
 
-# ==============================
-# 検索バー
-# ==============================
-search_col1, search_col2 = st.columns([3, 1])
-
-with search_col1:
-    search_query = st.text_input(
-        "🔍 用語を検索...",
-        value=st.session_state.search_query,
-        placeholder="用語名や一言説明で検索",
-    )
-    st.session_state.search_query = search_query
-
-with search_col2:
-    st.caption("※ 大文字小文字は区別されません")
 
 # ==============================
-# 用語フィルタリング
+# モード別表示
 # ==============================
-filtered_terms = TERMS
+if mode == "辞書モード":
+    # ------------------------------
+    # 検索バー
+    # ------------------------------
+    search_col1, search_col2 = st.columns([3, 1])
 
-# カテゴリフィルタ
-if category_filter != "すべて":
-    filtered_terms = [t for t in filtered_terms if t["category"] == category_filter]
+    with search_col1:
+        search_query = st.text_input(
+            "🔍 用語を検索...",
+            value=st.session_state.search_query,
+            placeholder="用語名や一言説明で検索",
+        )
+        st.session_state.search_query = search_query
 
-# 応用・トラブルの除外
-if not include_advanced:
-    filtered_terms = [
-        t
-        for t in filtered_terms
-        if t["category"] not in ("応用操作", "トラブルシューティング")
-    ]
+    with search_col2:
+        st.caption("※ 大文字小文字は区別されません")
 
-# 検索フィルタ
-if search_query:
-    q = search_query.lower()
-    filtered_terms = [
-        t
-        for t in filtered_terms
-        if q in t["name"].lower() or q in t["short_description"].lower()
-    ]
+    # ------------------------------
+    # 用語フィルタリング
+    # ------------------------------
+    filtered_terms = TERMS
 
-# 件数制限
-filtered_terms = filtered_terms[:max_items]
+    # カテゴリフィルタ
+    if category_filter != "すべて":
+        filtered_terms = [t for t in filtered_terms if t["category"] == category_filter]
 
-# ==============================
-# タブレイアウト
-# ==============================
-tab_dict, tab_table, tab_memo = st.tabs(["📋 辞書ビュー", "📊 一覧表", "📝 ノート"])
+    # 応用・トラブルの除外
+    if not include_advanced:
+        filtered_terms = [
+            t
+            for t in filtered_terms
+            if t["category"] not in ("応用操作", "トラブルシューティング")
+        ]
 
-# ---------- タブ1：辞書ビュー ----------
-with tab_dict:
-    col_left, col_mid, col_right = st.columns([1.4, 1.2, 2])
+    # 検索フィルタ
+    if search_query:
+        q = search_query.lower()
+        filtered_terms = [
+            t
+            for t in filtered_terms
+            if q in t["name"].lower() or q in t["short_description"].lower()
+        ]
 
-    # 左カラム：Gitとは
-    with col_left:
-        st.subheader("🌿 Gitとは")
+    # 件数制限
+    filtered_terms = filtered_terms[:max_items]
 
-        st.markdown(
-            """
+    # ------------------------------
+    # タブレイアウト
+    # ------------------------------
+    tab_dict, tab_table, tab_memo = st.tabs(["📋 辞書ビュー", "📊 一覧表", "📝 ノート"])
+
+    # ---------- タブ1：辞書ビュー ----------
+    with tab_dict:
+        col_left, col_mid, col_right = st.columns([1.4, 1.2, 2])
+
+        # 左カラム：Gitとは
+        with col_left:
+            st.subheader("🌿 Gitとは")
+
+            st.markdown(
+                """
 Gitは、ソースコードのバージョン管理システムです。
 ファイルの変更履歴を記録し、過去の状態にいつでも戻ることができます。
 """
-        )
+            )
 
-        with st.expander("📖 なぜGitが必要？", expanded=True):
-            st.markdown(
-                """
+            with st.expander("📖 なぜGitが必要？", expanded=True):
+                st.markdown(
+                    """
 - 変更履歴を完全に記録できる  
 - いつでも過去の状態に戻せる  
 - 複数人で同時に開発できる  
 - 実験的な開発を安全に実施できる  
 """
-            )
+                )
 
-        with st.expander("👥 チーム開発での利点"):
-            st.markdown(
-                """
+            with st.expander("👥 チーム開発での利点"):
+                st.markdown(
+                    """
 - 各自が独立して作業できる  
 - 変更内容を簡単に共有できる  
 - コードレビューが容易  
 - 誰が何を変更したか追跡できる  
 """
-            )
+                )
 
-        with st.expander("🛡️ 安全性"):
-            st.markdown(
-                """
+            with st.expander("🛡️ 安全性"):
+                st.markdown(
+                    """
 - データの完全性を保証  
 - 分散型で障害に強い  
 - 複数リモートでバックアップ  
 - 誤った変更も簡単に復元  
 """
-            )
+                )
 
-        st.markdown("---")
-        st.markdown("#### 🔄 基本的なワークフロー")
-        steps = [
-            "ファイルを編集",
-            "変更をステージング（git add）",
-            "コミット（git commit）",
-            "リモートにプッシュ（git push）",
-        ]
-        for i, step in enumerate(steps, 1):
-            st.markdown(
-                f"""
+            st.markdown("---")
+            st.markdown("#### 🔄 基本的なワークフロー")
+            steps = [
+                "ファイルを編集",
+                "変更をステージング（git add）",
+                "コミット（git commit）",
+                "リモートにプッシュ（git push）",
+            ]
+            for i, step in enumerate(steps, 1):
+                st.markdown(
+                    f"""
 <div class="workflow-step">
   <div class="step-number">{i}</div>
   <div style="font-size: 0.875rem; color: #374151; padding-top: 0.125rem;">
@@ -357,12 +550,12 @@ Gitは、ソースコードのバージョン管理システムです。
   </div>
 </div>
 """,
-                unsafe_allow_html=True,
-            )
+                    unsafe_allow_html=True,
+                )
 
-        st.markdown("---")
-        st.markdown(
-            """
+            st.markdown("---")
+            st.markdown(
+                """
 <div class="info-box amber">
   <p style="margin: 0; font-size: 0.875rem; color: #92400e;">
     💡 <strong>ヒント：</strong>
@@ -371,171 +564,233 @@ Gitは、ソースコードのバージョン管理システムです。
   </p>
 </div>
 """,
-            unsafe_allow_html=True,
-        )
+                unsafe_allow_html=True,
+            )
 
-    # 中央カラム：用語一覧
-    with col_mid:
-        st.subheader("📋 用語一覧")
-        st.caption(f"{len(filtered_terms)} 件ヒット")
+        # 中央カラム：用語一覧
+        with col_mid:
+            st.subheader("📋 用語一覧")
+            st.caption(f"{len(filtered_terms)} 件ヒット")
 
-        list_mode = st.radio(
-            "表示順",
-            options=["カテゴリ別", "名前順"],
-            horizontal=True,
-            key="list_mode",
-        )
+            # ★ ラジオは「表示順の切り替え」にだけ使う（機能カウント用にもなる）
+            list_mode = st.radio(
+                "表示順",
+                options=["カテゴリ別", "名前順"],
+                horizontal=True,
+                key="list_mode",
+            )
 
-        if list_mode == "名前順":
-            terms_for_view = sorted(filtered_terms, key=lambda t: t["name"])
-            for term in terms_for_view:
-                if st.button(
-                    f"{term['name']}：{term['short_description']}",
-                    key=f"term_{term['id']}",
-                    use_container_width=True,
-                ):
-                    st.session_state.selected_term_id = term["id"]
-        else:
-            for category in CATEGORIES:
-                cat_terms = [t for t in filtered_terms if t["category"] == category]
-                if not cat_terms:
-                    continue
-
-                st.markdown(
-                    f"<div class='category-header'>{category}</div>",
-                    unsafe_allow_html=True,
-                )
-
-                for term in cat_terms:
+            if list_mode == "名前順":
+                # 名前順に並べてボタンで選択
+                terms_for_view = sorted(filtered_terms, key=lambda t: t["name"])
+                for term in terms_for_view:
                     if st.button(
                         f"{term['name']}：{term['short_description']}",
                         key=f"term_{term['id']}",
                         use_container_width=True,
                     ):
                         st.session_state.selected_term_id = term["id"]
-                        break
 
-    # 右カラム：用語詳細
-    with col_right:
-        selected_term = next(
-            (t for t in TERMS if t["id"] == st.session_state.selected_term_id),
-            TERMS[0],
-        )
+            else:
+                # カテゴリ別に表示して、各用語はボタンで選択
+                for category in CATEGORIES:
+                    cat_terms = [
+                        t for t in filtered_terms if t["category"] == category
+                    ]
+                    if not cat_terms:
+                        continue
 
-        st.subheader("📖 用語詳細")
+                    st.markdown(
+                        f"<div class='category-header'>{category}</div>",
+                        unsafe_allow_html=True,
+                    )
 
-        st.markdown(
-            f"<span class='tag'>📌 {selected_term['category']}</span>",
-            unsafe_allow_html=True,
-        )
-        st.markdown(f"### {selected_term['name']}")
-        st.markdown(
-            f"**一言説明：** {selected_term['short_description']}",
-        )
+                    for term in cat_terms:
+                        if st.button(
+                            f"{term['name']}：{term['short_description']}",
+                            key=f"term_{term['id']}",
+                            use_container_width=True,
+                        ):
+                            st.session_state.selected_term_id = term["id"]
+                            break
 
-        st.markdown("---")
-        st.markdown("#### 詳細説明")
-        st.markdown(
-            f"""
+        # 右カラム：用語詳細
+        with col_right:
+            selected_term = next(
+                (t for t in TERMS if t["id"] == st.session_state.selected_term_id),
+                TERMS[0],
+            )
+
+            st.subheader("📖 用語詳細")
+
+            st.markdown(
+                f"<span class='tag'>📌 {selected_term['category']}</span>",
+                unsafe_allow_html=True,
+            )
+            st.markdown(f"### {selected_term['name']}")
+            st.markdown(
+                f"**一言説明：** {selected_term['short_description']}",
+            )
+
+            st.markdown("---")
+            st.markdown("#### 詳細説明")
+            st.markdown(
+                f"""
 <div style="background-color: #f9fafb; padding: 1rem; border-radius: 0.5rem;">
   <p style="color: #374151; line-height: 1.75; margin: 0;">
     {selected_term['full_description']}
   </p>
 </div>
 """,
-            unsafe_allow_html=True,
-        )
-
-        if selected_term.get("examples"):
-            st.markdown("#### 💻 使用例")
-            for example in selected_term["examples"]:
-                st.code(example, language="bash")
-
-        if selected_term.get("related_terms"):
-            st.markdown("#### 🔗 関連用語")
-            related_terms = [
-                t
-                for t in TERMS
-                if t["id"] in selected_term.get("related_terms", [])
-            ]
-            for rt in related_terms:
-                if st.button(
-                    f"{rt['name']}：{rt['short_description']}",
-                    key=f"related_{rt['id']}",
-                ):
-                    st.session_state.selected_term_id = rt["id"]
-
-        st.markdown("---")
-        st.info(
-            "💬 「📝 ノート」タブに、学んだことや自分の言葉での説明をメモしておくと、"
-            "あとから復習したり、社内向け教材のタネにできます。"
-        )
-
-# ---------- タブ2：一覧表 & ダウンロード ----------
-with tab_table:
-    st.subheader("📊 用語一覧（表形式）")
-
-    table_data = [
-        {
-            "ID": t["id"],
-            "用語": t["name"],
-            "カテゴリ": t["category"],
-            "一言説明": t["short_description"],
-        }
-        for t in filtered_terms
-    ]
-    df = pd.DataFrame(table_data)
-
-    st.dataframe(df, use_container_width=True)
-
-    csv = df.to_csv(index=False).encode("utf-8-sig")
-
-    st.download_button(
-        label="📥 この一覧をCSVでダウンロード",
-        data=csv,
-        file_name="git_terms.csv",
-        mime="text/csv",
-    )
-
-    st.caption("※ 絞り込み条件・検索結果に応じた内容がダウンロードされます。")
-
-# ---------- タブ3：全体ノート ----------
-with tab_memo:
-    st.subheader("📝 学習ノート")
-
-    st.markdown(
-        """
-Gitやこの辞典を使って気づいたこと・疑問点・社内での運用ルール案などを、
-自由にメモしておくスペースです。
-「保存」を押すたびに、新しいノートとしてSupabaseに記録されます。
-"""
-    )
-
-    # ▼ フォーム化して、submit 時に自動クリアする
-    with st.form("note_form", clear_on_submit=True):
-        note_text = st.text_area(
-            "学習メモ（1件分）",
-            height=200,
-        )
-        submitted = st.form_submit_button("💾 保存")
-
-    if submitted:
-        if note_text.strip():
-            save_learning_note(note_text.strip())
-            st.success("Supabase に学習ノートを保存しました。")
-        else:
-            st.warning("メモが空です。何か入力してから保存してください。")
-
-
-    st.markdown("---")
-    st.markdown("#### 📚 保存済みノート一覧（最新順）")
-
-    notes = load_learning_notes()
-    if not notes:
-        st.info("まだ保存されたノートはありません。上の入力欄から最初のメモを残してみてください。")
-    else:
-        for n in notes:
-            st.markdown(
-                f"- {n['created_at']}: {n['note_text']}"
+                unsafe_allow_html=True,
             )
 
+            if selected_term.get("examples"):
+                st.markdown("#### 💻 使用例")
+                for example in selected_term["examples"]:
+                    st.code(example, language="bash")
+
+            if selected_term.get("related_terms"):
+                st.markdown("#### 🔗 関連用語")
+                related_terms = [
+                    t
+                    for t in TERMS
+                    if t["id"] in selected_term.get("related_terms", [])
+                ]
+                for rt in related_terms:
+                    if st.button(
+                        f"{rt['name']}：{rt['short_description']}",
+                        key=f"related_{rt['id']}",
+                    ):
+                        st.session_state.selected_term_id = rt["id"]
+
+            st.markdown("---")
+            st.info(
+                "💬 サイドバーの「この用語の社内での使い方・注意点」にメモを残しておくと、"
+                "自分用のGitリファレンスとして育てることができます。"
+            )
+
+    # ---------- タブ2：一覧表 & ダウンロード ----------
+    with tab_table:
+        st.subheader("📊 用語一覧（表形式）")
+
+        table_data = [
+            {
+                "ID": t["id"],
+                "用語": t["name"],
+                "カテゴリ": t["category"],
+                "一言説明": t["short_description"],
+            }
+            for t in filtered_terms
+        ]
+        df = pd.DataFrame(table_data)
+
+        st.dataframe(df, use_container_width=True)
+
+        csv = df.to_csv(index=False).encode("utf-8-sig")
+
+        st.download_button(
+            label="📥 この一覧をCSVでダウンロード",
+            data=csv,
+            file_name="git_terms.csv",
+            mime="text/csv",
+        )
+
+        st.caption("※ 絞り込み条件・検索結果に応じた内容がダウンロードされます。")
+
+    # ---------- タブ3：全体ノート ----------
+    with tab_memo:
+        st.subheader("📝 学習ノート")
+
+        st.markdown(
+            """
+Gitやこの辞典を使って気づいたこと・疑問点・社内での運用ルール案などを、
+自由にメモしておくスペースです。（ローカルセッションのみ）
+"""
+        )
+
+        global_note = st.text_area(
+            "自由メモ",
+            value=st.session_state.global_note,
+            height=200,
+        )
+        st.session_state.global_note = global_note
+
+        if global_note.strip():
+            st.success("✅ メモが保存されました（ブラウザを閉じるまでは保持されます）。")
+        else:
+            st.warning(
+                "まだメモがありません。学んだことを1行だけでも残しておくと、復習しやすくなります。"
+            )
+
+    # 一時テスト
+    test = supabase.table("term_memos").select("*").execute()
+    print("TEST SELECT:", test)
+
+elif mode == "クイズモード":
+    # ==============================
+    # クイズモード画面
+    # ==============================
+    st.title("🧩 Git クイズ")
+
+    questions = load_quiz_questions_from_supabase(limit=5)
+
+    if not questions:
+        st.warning("Supabase の git_quiz_questions に問題が登録されていません。")
+    else:
+        st.markdown("Supabase に登録された問題から、ランダムに5問出題します。")
+
+        # 回答保持用
+        if "quiz_answers" not in st.session_state:
+            st.session_state.quiz_answers = {}
+
+        for idx, q in enumerate(questions):
+            st.markdown(f"### Q{idx + 1}. {q['question_text']}")
+            options = [
+                q["choice_1"],
+                q["choice_2"],
+                q["choice_3"],
+                q["choice_4"],
+            ]
+            user_answer = st.radio(
+                "選択肢を選んでください",
+                options,
+                key=f"quiz_q_{q['id']}",
+            )
+            st.session_state.quiz_answers[q["id"]] = user_answer
+            st.write("---")
+
+        if st.button("採点する"):
+            score = 0
+            results = []
+
+            for q in questions:
+                # correct_choice は 1〜4 の整数前提
+                correct_index = (q["correct_choice"] or 1) - 1
+                correct_text = [
+                    q["choice_1"],
+                    q["choice_2"],
+                    q["choice_3"],
+                    q["choice_4"],
+                ][correct_index]
+
+                user_answer = st.session_state.quiz_answers.get(q["id"])
+                is_correct = (user_answer == correct_text)
+                if is_correct:
+                    score += 1
+
+                results.append((q, is_correct, correct_text, user_answer))
+
+            st.subheader(f"結果: {score} / {len(questions)} 問 正解")
+
+            for idx, (q, is_correct, correct_text, user_answer) in enumerate(results):
+                st.markdown(f"#### Q{idx + 1}. {q['question_text']}")
+                if is_correct:
+                    st.success(f"✔ 正解！ あなたの回答: {user_answer}")
+                else:
+                    st.error(
+                        f"✖ 不正解… あなたの回答: {user_answer} ／ 正解: {correct_text}"
+                    )
+                if q.get("explanation"):
+                    st.info(f"解説: {q['explanation']}")
+                st.write("---")
