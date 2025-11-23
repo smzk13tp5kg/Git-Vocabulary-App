@@ -722,23 +722,26 @@ Git やこの辞典を使って気づいたこと・疑問点・
         st.markdown("---")
         st.markdown("#### 📚 ノート履歴（新しい順 最大50件）")
 
-        notes = load_learning_notes_from_supabase(limit=50)
-        if not notes:
-            st.info("まだ Learningnotice にノートがありません。最初の1件を書いてみましょう。")
-        else:
-            for row in notes:
-                created_at = row.get("created_at")
-                if created_at:
-                    # "2025-11-23T12:34:56.789Z" → "2025-11-23 12:34"
-                    date_str = str(created_at).replace("T", " ").split(".")[0][:16]
-                else:
-                    date_str = "日時不明"
+notes = load_learning_notes_from_supabase(limit=50)
+if not notes:
+    st.info("まだ Learningnotice にノートがありません。最初の1件を書いてみましょう。")
+else:
+    for row in notes:
+        # created_at があれば使う。なければ id から擬似的に表示する
+        created_at = row.get("created_at") or row.get("inserted_at")
 
-                st.markdown(
-                    f"**{date_str}**  \n"
-                    f"{row.get('note_text', '')}"
-                )
-                st.markdown("---")
+        if created_at:
+            date_str = str(created_at).replace("T", " ").split(".")[0][:16]
+        else:
+            # created_at が本当にない場合は id を表示してお茶を濁す
+            date_str = f"ID: {row.get('id', '?')}"
+
+        st.markdown(
+            f"**{date_str}**  \n"
+            f"{row.get('note_text', '')}"
+        )
+        st.markdown("---")
+
 
 elif mode == "クイズに挑戦":
     # ==============================
@@ -867,4 +870,5 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
