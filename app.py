@@ -1,5 +1,27 @@
+import os
+
 import streamlit as st
 import pandas as pd
+from dotenv import load_dotenv
+from supabase import create_client, Client
+
+# ==============================
+# Supabase クライアント初期化
+# ==============================
+load_dotenv()
+
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+print("DEBUG SUPABASE_URL:", SUPABASE_URL)
+print("DEBUG SUPABASE_KEY:", SUPABASE_KEY)
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    st.error("SUPABASE_URL / SUPABASE_KEY が .env に設定されていません。")
+    st.stop()
+
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 
 # ==============================
 # ページ設定
@@ -281,6 +303,23 @@ TERMS = [
 ]
 
 CATEGORIES = ["基本概念", "基本操作", "応用操作", "トラブルシューティング"]
+# ==============================
+# メモデータの読み込み／保存（Supabase）
+# ==============================
+@st.cache_data
+def load_term_memos_from_supabase():
+    res = supabase.table("term_memos").select("term_id, memo_text").execute()
+    if not res.data:
+        return {}
+    # term_id -> memo_text の dict に変換
+    return {row["term_id"]: row["memo_text"] for row in res.data}
+
+
+def save_term_memo(term_id: str, memo_text: str):
+    # term_id に UNIQUE index を貼ってあるので upsert で上書きできる
+    supabase.table("term_memos").upsert(
+        {"term_id": term_id, "memo_text": memo_text}
+    ).execute()
 
 # ==============================
 # セッション状態
@@ -292,8 +331,8 @@ if "search_query" not in st.session_state:
     st.session_state.search_query = ""
 
 if "term_memos" not in st.session_state:
-    st.session_state.term_memos = {}  # term_id -> memo text
-
+    # 起動時に Supabase からメモを読み込む
+    st.session_state.term_memos = load_term_memos_from_supabase()
 
 # ==============================
 # タイトル & メトリクス
@@ -345,8 +384,18 @@ with st.sidebar:
         "この用語の社内での使い方・注意点",
         value=current_memo,
         height=120,
+        key=f"memo_{current_id}",
     )
+
+    # セッションを更新
     st.session_state.term_memos[current_id] = memo_text
+
+    if st.button("💾 メモを保存", key=f"save_{current_id}"):
+        if memo_text.strip():
+            save_term_memo(current_id, memo_text.strip())
+            st.success("Supabase にメモを保存しました。")
+        else:
+            st.warning("メモが空です。何か入力してから保存してください。")
 
     st.markdown("---")
     st.caption("このアプリについてのフィードバック（ダミー）")
@@ -358,6 +407,7 @@ with st.sidebar:
         submitted = st.form_submit_button("送信")
         if submitted:
             st.success("フィードバックありがとうございます！")
+
 
 
 # ==============================
@@ -648,4 +698,6 @@ Gitやこの辞典を使って気づいたこと・疑問点・社内での運�
     else:
         st.warning("まだメモがありません。学んだことを1行だけでも残しておくと、復習しやすくなります。")
 
-
+# 一時テスト
+test = supabase.table("term_memos").select("*").execute()
+print("TEST SELECT:", test)
