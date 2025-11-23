@@ -192,9 +192,7 @@ if "selected_term_id" not in st.session_state:
 if "search_query" not in st.session_state:
     st.session_state.search_query = ""
 
-# ノート入力欄用のセッションキー
-if "global_note_input" not in st.session_state:
-    st.session_state.global_note_input = ""
+
 
 # ==============================
 # タイトル & メトリクス
@@ -513,25 +511,21 @@ Gitやこの辞典を使って気づいたこと・疑問点・社内での運�
 """
     )
 
-    # 入力欄
-    global_note = st.text_area(
-        "学習メモ（1件分）",
-        value=st.session_state.global_note_input,
-        height=200,
-        key="global_note_input",
-    )
+    # ▼ フォーム化して、submit 時に自動クリアする
+    with st.form("note_form", clear_on_submit=True):
+        note_text = st.text_area(
+            "学習メモ（1件分）",
+            height=200,
+        )
+        submitted = st.form_submit_button("💾 保存")
 
-    col_save, col_dummy = st.columns([1, 3])
-    with col_save:
-        if st.button("💾 保存", use_container_width=True):
-            if st.session_state.global_note_input.strip():
-                save_learning_note(st.session_state.global_note_input.strip())
-                st.success("Supabase に学習ノートを保存しました。")
+    if submitted:
+        if note_text.strip():
+            save_learning_note(note_text.strip())
+            st.success("Supabase に学習ノートを保存しました。")
+        else:
+            st.warning("メモが空です。何か入力してから保存してください。")
 
-                # 入力欄をクリア
-                st.session_state.global_note_input = ""
-            else:
-                st.warning("メモが空です。何か入力してから保存してください。")
 
     st.markdown("---")
     st.markdown("#### 📚 保存済みノート一覧（最新順）")
@@ -544,3 +538,4 @@ Gitやこの辞典を使って気づいたこと・疑問点・社内での運�
             st.markdown(
                 f"- {n['created_at']}: {n['note_text']}"
             )
+
