@@ -830,20 +830,6 @@ if mode == "辞書モード":
             color: #ffd700;
             font-size: 1.5em;
         }
-        
-        @media (max-width: 768px) {
-            .book-container {
-                padding: 20px;
-            }
-            
-            .main-title {
-                font-size: 1.8em;
-            }
-            
-            .chapter {
-                padding: 20px;
-            }
-        }
     </style>
 </head>
 <body>
@@ -861,6 +847,7 @@ if mode == "辞書モード":
             </div>
         </div>
 
+        <!-- 序章 -->
         <div class="chapter">
             <div class="chapter-number">序章</div>
             <h2>冒険の始まり</h2>
@@ -872,9 +859,104 @@ if mode == "辞書モード":
             <p style="margin-top: 20px;">この物語は、一人の開発者がこのミッションに挑む過程を通じて、チーム開発の強力な武器である<strong style="color: #ffd700;">GitHub</strong>の力を学んでいく冒険譚です。</p>
         </div>
 
-        <!-- ここから下は、今まで使っていた第1〜4章のHTMLをそのまま貼ってOK -->
+        <!-- 第1章 clone -->
+        <div class="chapter">
+            <div class="chapter-number">第1章</div>
+            <h2>🗝️ プロジェクトへの参加「clone」</h2>
+            <p>物語は、あなたが「myアプリ」開発チームに新しく参加するところから始まります。最初の任務は、プロジェクトの全体像を把握し、開発を始める準備をすること。そのために、GitHub上にあるプロジェクトの設計図を自分の手元に持ってくる必要があります。</p>
 
-        <div class="conclusion" style="margin-top:40px;">
+            <div class="skill-box">
+                <h3>clone（クローン）とは？</h3>
+                <p>GitHubに保存されているプロジェクト（リモートリポジトリ）の内容を、まるごとあなたのパソコンにコピーする魔法です。重要なのは、ただのコピーではなく、元のリモートリポジトリとの「接続情報」も一緒に保持される点です。</p>
+            </div>
+
+            <div class="why-box">
+                <strong>🤔 なぜ必要？</strong>
+                <p>初めてプロジェクトに参加するときは、まずリモート（GitHub）にあるコードを手元に持ってこなければ、コードを編集したり動かしたりすることができません。cloneは、そのための最初のステップであり、これによってローカルでの変更を後でリモートに同期させることができるようになります。</p>
+            </div>
+
+            <div class="example-box">
+                <strong>📚 例えるなら…</strong>
+                <p>学校の教科書を先生が黒板に書いてくれたとします。それをあなたのノートに書き写す作業、それがcloneです。これで、あなた専用の教科書が手に入ります。</p>
+            </div>
+
+            <div class="code-scroll">
+git clone https://github.com/team/my-app.git
+            </div>
+        </div>
+
+        <!-- 第2章 branch -->
+        <div class="chapter">
+            <div class="chapter-number">第2章</div>
+            <h2>🌿 自分の作業場所の確保「branch」</h2>
+            <p>プロジェクトのコードを手に入れたあなたに、リーダーから「ログインページの作成」という具体的なタスクが任されました。しかし、チームの他のメンバーも、それぞれ別の機能を追加したり、バグを修正したりしています。</p>
+
+            <div class="skill-box">
+                <h3>branch（ブランチ）とは？</h3>
+                <p>メインのコード（mainブランチ）とは別の「コピー」を作成して、その中で新しい機能を開発したり修正を行ったりするための仕組みです。このコピーのことを「ブランチ」と呼びます。</p>
+            </div>
+
+            <div class="why-box">
+                <strong>🤔 なぜ必要？</strong>
+                <p>mainブランチは、常に正常に動作する「完成版」のコード、つまりチームの<strong style="color: #ffd700;">「信頼できる唯一の情報源（Source of Truth）」</strong>として扱われます。ここを直接変更すると他メンバーに大きな影響を与えてしまうため、隔離された作業環境が必要です。</p>
+            </div>
+
+            <div class="example-box">
+                <strong>📚 例えるなら…</strong>
+                <p>先生が宿題のプリント（main）を配ったとき、あなたがコピーを取ってそのコピーに答えを書くイメージです。本物は汚さずに、自分のコピーの上で安心して作業ができます。</p>
+            </div>
+
+            <div class="code-scroll">
+git branch feature/add-login-page
+git checkout feature/add-login-page
+            </div>
+        </div>
+
+        <!-- 第3章 commit -->
+        <div class="chapter">
+            <div class="chapter-number">第3章</div>
+            <h2>📝 作業内容の記録「commit」</h2>
+            <p>ログインフォームの基本部分ができたので、ここで一度、作業内容を歴史として刻みます。</p>
+
+            <div class="skill-box">
+                <h3>commit（コミット）とは？</h3>
+                <p>ファイルへの変更を保存する操作であり、「いつ・誰が・何を・なぜ」変更したかをメッセージとして残すことができます。</p>
+            </div>
+
+            <div class="why-box">
+                <strong>🤔 なぜ必要？</strong>
+                <p>コミットをこまめに行うことで、問題が起きても過去の状態に戻ることができ、またチームメンバーが変更の意図を理解しやすくなります。</p>
+            </div>
+
+            <div class="code-scroll">
+git add .
+git commit -m "ログインフォームの基本構造を追加"
+            </div>
+        </div>
+
+        <!-- 第4章 push -->
+        <div class="chapter">
+            <div class="chapter-number">第4章</div>
+            <h2>📤 変更内容の共有「push」</h2>
+            <p>ローカルに記録した変更を、チーム全員が見られるようにGitHubへ届けます。</p>
+
+            <div class="skill-box">
+                <h3>push（プッシュ）とは？</h3>
+                <p>自分のパソコンで保存したコミットを、GitHubのリモートリポジトリに送信する操作です。</p>
+            </div>
+
+            <div class="example-box">
+                <strong>📚 例えるなら…</strong>
+                <p>自分のノートにまとめた宿題を、先生に提出するイメージです。提出して初めて、先生（チーム）が内容を確認できます。</p>
+            </div>
+
+            <div class="code-scroll">
+git push origin feature/add-login-page
+            </div>
+        </div>
+
+        <!-- まとめ -->
+        <div class="conclusion">
             <h2>黄金のワークフロー</h2>
             <div class="workflow-steps">
                 <span>Clone</span><span class="arrow">→</span>
@@ -892,8 +974,8 @@ if mode == "辞書モード":
 </html>
         """
 
-        # ここで iframe としてレンダリング
         components.html(story_html, height=900, scrolling=True)
+
 
 
 
@@ -1162,6 +1244,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
