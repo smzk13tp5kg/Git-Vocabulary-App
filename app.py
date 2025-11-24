@@ -112,14 +112,18 @@ st.markdown(
 # ==============================
 # クイズ用ボタンCSS
 # ==============================
+# ==============================
+# クイズ用ボタンCSS
+# ==============================
 def inject_flat_button_css():
     st.markdown(
         """
 <style>
-/* クイズ系アクションボタン共通スタイル */
-/* 通常ボタン(st.button) と フォーム送信ボタン(st.form_submit_button) の両方を対象にする */
-.stButton > button,
-.stFormSubmitButton > button {
+/* ▼▼ クイズ系アクションボタン専用スタイル ▼▼ */
+/* .quiz-action 内にある st.button / st.form_submit_button だけ対象にする */
+
+.quiz-action .stButton > button,
+.quiz-action .stFormSubmitButton > button {
   font-size: 1.6rem;
   font-weight: 700;
   line-height: 1.5;
@@ -141,15 +145,15 @@ def inject_flat_button_css():
 }
 
 /* ラベルを前面に出す（アニメレイヤーより上） */
-.stButton > button > div,
-.stFormSubmitButton > button > div {
+.quiz-action .stButton > button > div,
+.quiz-action .stFormSubmitButton > button > div {
   position: relative;
   z-index: 1;
 }
 
-/* ▼▼ ここが a.btn-flat の書き換え版 ▼▼ */
-.stButton > button::before,
-.stFormSubmitButton > button::before {
+/* スライドアニメ（ピンク） */
+.quiz-action .stButton > button::before,
+.quiz-action .stFormSubmitButton > button::before {
   content: '';
   position: absolute;
   top: 0;
@@ -162,14 +166,15 @@ def inject_flat_button_css():
   z-index: 0;
 }
 
-.stButton > button:hover::before,
-.stFormSubmitButton > button:hover::before {
+.quiz-action .stButton > button:hover::before,
+.quiz-action .stFormSubmitButton > button:hover::before {
   transform: translateX(0%);
 }
 </style>
         """,
         unsafe_allow_html=True,
     )
+
 
 # ==============================
 # 辞書モード用ボタンCSS
@@ -867,6 +872,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
