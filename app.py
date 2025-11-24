@@ -110,18 +110,58 @@ st.markdown(
 )
 
 # ==============================
-# クイズ用ボタンCSS
+# ボタン用カスタムCSS（辞書 + クイズ）
 # ==============================
-# ==============================
-# クイズ用ボタンCSS
-# ==============================
-def inject_flat_button_css():
-    st.markdown(
-        """
+st.markdown(
+    """
 <style>
-/* ▼▼ クイズ系アクションボタン専用スタイル ▼▼ */
-/* .quiz-action 内にある st.button / st.form_submit_button だけ対象にする */
+/* ▼▼ 辞書ビュー用：用語一覧ボタン（AliceBlue / Azure） ▼▼ */
+.term-button-container .stButton > button {
+    position: relative;
+    width: 100%;
+    padding: 0.9rem 1.1rem;
+    border-radius: 12px;
+    border: 1px solid #F0FFFF;       /* Azure */
+    background-color: #F0F8FF;       /* AliceBlue */
+    color: #111827;
+    text-align: left;
+    font-size: 0.90rem;
+    font-weight: 500;
+    overflow: hidden;
+}
 
+/* テキスト前面 */
+.term-button-container .stButton > button > div {
+    position: relative;
+    z-index: 2;
+}
+
+/* スライドアニメ：Azure */
+.term-button-container .stButton > button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #F0FFFF;             /* Azure */
+    transform: translateX(-96%);
+    transition: transform .5s ease-in-out;
+    z-index: 1;
+}
+
+/* Hover時：スライドイン */
+.term-button-container .stButton > button:hover::before {
+    transform: translateX(0%);
+}
+
+/* Hover時テキスト色 */
+.term-button-container .stButton > button:hover {
+    color: #111827;
+}
+
+/* ▼▼ クイズ系アクションボタン専用スタイル（黒＋ピンク） ▼▼ */
+/* .quiz-action 内にある st.button / st.form_submit_button だけ対象にする */
 .quiz-action .stButton > button,
 .quiz-action .stFormSubmitButton > button {
   font-size: 1.6rem;
@@ -171,67 +211,9 @@ def inject_flat_button_css():
   transform: translateX(0%);
 }
 </style>
-        """,
-        unsafe_allow_html=True,
-    )
-
-
-# ==============================
-# 辞書モード用ボタンCSS
-# ==============================
-st.markdown(
-    """
-<style>
-/* ▼▼ 辞書モード用：フラットボタン（AliceBlue / Azure） ▼▼ */
-
-.term-button-container button {
-    position: relative;
-    width: 100% !important;
-    padding: 0.9rem 1.1rem !important;
-    border-radius: 12px !important;
-    border: 1px solid #F0FFFF !important;       /* Azure */
-    background-color: #F0F8FF !important;       /* AliceBlue */
-    color: #111827 !important;
-    text-align: left !important;
-    font-size: 0.90rem !important;
-    font-weight: 500 !important;
-    overflow: hidden !important;
-}
-
-/* テキスト前面 */
-.term-button-container button > div {
-    position: relative;
-    z-index: 2;
-}
-
-/* スライドアニメ：Azure */
-.term-button-container button::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #F0FFFF;             /* Azure */
-    transform: translateX(-96%);
-    transition: transform .5s ease-in-out;
-    z-index: 1;
-}
-
-/* Hover時：スライドイン */
-.term-button-container button:hover::before {
-    transform: translateX(0%);
-}
-
-/* Hover時テキスト色 */
-.term-button-container button:hover {
-    color: #111827 !important;
-}
-</style>
 """,
     unsafe_allow_html=True,
 )
-
 
 # ==============================
 # 用語データ
@@ -542,8 +524,6 @@ with st.sidebar:
 # 辞書モード
 # ==============================
 if mode == "辞書モード":
-    # クイズ用フラットボタンCSSをこのモードでも適用
-    inject_flat_button_css()
     # 検索バー
     search_col1, search_col2 = st.columns([3, 1])
 
@@ -583,7 +563,6 @@ if mode == "辞書モード":
     tab_dict, tab_table, tab_memo = st.tabs(["📋 辞書ビュー", "📊 一覧表", "📝 ノート"])
 
     # --- 辞書ビュー ---
-    # --- 辞書ビュー ---
     with tab_dict:
         col_left, col_mid, col_right = st.columns([1.4, 1.2, 2])
 
@@ -606,7 +585,7 @@ Gitは、ソースコードのバージョン管理システムです。
 """
                 )
 
-        # 中央カラム：用語一覧（★ここにスタイル適用★）
+        # 中央カラム：用語一覧（★ここに青系スタイル適用★）
         with col_mid:
             st.subheader("📋 用語一覧")
             st.caption(f"{len(filtered_terms)} 件ヒット")
@@ -685,7 +664,6 @@ Gitは、ソースコードのバージョン管理システムです。
                 unsafe_allow_html=True,
             )
 
-
     # --- 一覧表 ---
     with tab_table:
         st.subheader("📊 用語一覧（表形式）")
@@ -713,14 +691,14 @@ Git やこの辞典を使って気づいたこと・疑問点・
 """
         )
 
-        # ① テキストエリア
+        # テキストエリア
         new_note = st.text_area(
             "新しい学習メモを入力",
             value=st.session_state.learning_note_input,
             height=150,
         )
 
-        # ②～④ ボタンを .quiz-action でラップ
+        # 「ノートを保存」ボタン → 黒＋ピンク（.quiz-action）
         st.markdown('<div class="quiz-action">', unsafe_allow_html=True)
         if st.button("✏️ ノートを保存"):
             if new_note.strip():
@@ -747,12 +725,10 @@ Git やこの辞典を使って気づいたこと・疑問点・
                 st.markdown(f"**{date_str}**  \n{row.get('note_text', '')}")
                 st.markdown("---")
 
-
 # ==============================
 # クイズに挑戦モード
 # ==============================
 elif mode == "クイズに挑戦":
-    inject_flat_button_css()  # ★ここを追加
     st.title("🧩 Git クイズに挑戦")
 
     questions = load_quiz_questions_from_supabase(limit=5)
@@ -781,6 +757,8 @@ elif mode == "クイズに挑戦":
             st.session_state.quiz_answers[q["id"]] = user_answer
             st.write("---")
 
+        # 「採点する」ボタン → 黒＋ピンク（.quiz-action）
+        st.markdown('<div class="quiz-action">', unsafe_allow_html=True)
         if st.button("採点する"):
             score = 0
             results = []
@@ -815,12 +793,12 @@ elif mode == "クイズに挑戦":
                 if q.get("explanation"):
                     st.info(f"解説: {q['explanation']}")
                 st.write("---")
+        st.markdown("</div>", unsafe_allow_html=True)
 
 # ==============================
 # クイズ登録モード
 # ==============================
 elif mode == "クイズ登録":
-    inject_flat_button_css()  # ★ここを追加
     st.title("🛠 Git クイズ問題の登録")
 
     st.markdown(
@@ -849,7 +827,10 @@ git_quiz_questions テーブルにクイズ問題を登録します。
 
         explanation = st.text_area("解説（任意）", height=120)
 
+        # 「この内容でクイズを登録」ボタン → 黒＋ピンク（.quiz-action）
+        st.markdown('<div class="quiz-action">', unsafe_allow_html=True)
         submitted = st.form_submit_button("この内容でクイズを登録")
+        st.markdown("</div>", unsafe_allow_html=True)
 
     if submitted:
         if not question_text.strip():
@@ -877,17 +858,3 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
