@@ -158,6 +158,60 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
+def inject_flat_button_css():
+    st.markdown(
+        """
+<style>
+/* クイズ系アクションボタン共通スタイル */
+.stButton > button {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.5;
+  position: relative;
+  display: inline-block;
+  padding: 1.5rem 6rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  color: #fff;
+  border-radius: 0;
+  background: #000;
+  border: none;
+  overflow: hidden;
+}
+
+/* ラベルを前面に出す（アニメレイヤーより上） */
+.stButton > button > div {
+  position: relative;
+  z-index: 1;
+}
+
+/* ▼▼ ここが a.btn-flat の書き換え版 ▼▼ */
+.stButton > button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  transition: all .5s ease-in-out;
+  transform: translateX(-96%);
+  background: #eb6877;
+  z-index: 0;
+}
+
+.stButton > button:hover::before {
+  transform: translateX(0%);
+}
+</style>
+        """,
+        unsafe_allow_html=True,
+    )
+
 
 # ==============================
 # 用語データ
@@ -671,6 +725,7 @@ Git やこの辞典を使って気づいたこと・疑問点・
 # クイズに挑戦モード
 # ==============================
 elif mode == "クイズに挑戦":
+    inject_flat_button_css()  # ★ここを追加
     st.title("🧩 Git クイズに挑戦")
 
     questions = load_quiz_questions_from_supabase(limit=5)
@@ -738,6 +793,7 @@ elif mode == "クイズに挑戦":
 # クイズ登録モード
 # ==============================
 elif mode == "クイズ登録":
+    inject_flat_button_css()  # ★ここを追加
     st.title("🛠 Git クイズ問題の登録")
 
     st.markdown(
@@ -794,6 +850,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
