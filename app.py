@@ -217,6 +217,59 @@ def inject_flat_button_css():
         unsafe_allow_html=True,
     )
 
+st.markdown(
+    """
+<style>
+/* ▼▼ 辞書モード用：フラットボタン（AliceBlue / Azure） ▼▼ */
+
+.term-button-container .stButton > button {
+    position: relative;
+    width: 100%;
+    padding: 0.9rem 1.1rem;
+    border-radius: 12px;
+    border: 1px solid #F0FFFF;       /* Azure */
+    background-color: #F0F8FF;       /* AliceBlue */
+    color: #111827;
+    text-align: left;
+    font-size: 0.90rem;
+    font-weight: 500;
+    overflow: hidden;
+}
+
+/* テキスト前面 */
+.term-button-container .stButton > button > div {
+    position: relative;
+    z-index: 2;
+}
+
+/* スライドアニメ：Azure */
+.term-button-container .stButton > button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #F0FFFF;             /* Azure */
+    transform: translateX(-96%);
+    transition: transform .5s ease-in-out;
+    z-index: 1;
+}
+
+/* Hover時：スライドイン */
+.term-button-container .stButton > button:hover::before {
+    transform: translateX(0%);
+}
+
+/* Hover時テキスト色 */
+.term-button-container .stButton > button:hover {
+    color: #111827;
+}
+
+</style>
+""",
+    unsafe_allow_html=True,
+)
 
 
 # ==============================
@@ -856,6 +909,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
