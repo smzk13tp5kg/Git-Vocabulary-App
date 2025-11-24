@@ -105,53 +105,7 @@ st.markdown(
     flex-shrink: 0;
 }
 
-/* ▼▼ 用語選択ボタン（中央カラム）のカスタムスタイル ▼▼ */
-.term-button-container .stButton {
-    width: 100%;
-}
 
-.term-button-container .stButton > button {
-    position: relative;
-    width: 100%;
-    padding: 0.9rem 1.1rem;
-    border-radius: 12px;
-    border: 1px solid #CCFFFF;   /* 枠線：アニメーションカラーに合わせる */
-    background-color: #FFFFFF;    /* ベースカラー */
-    color: #111827;
-    text-align: left;
-    font-size: 0.90rem;
-    font-weight: 500;
-    overflow: hidden;             /* アニメーションをボタン内に閉じ込める */
-}
-
-/* ボタン内テキストを前面に出す */
-.term-button-container .stButton > button > div {
-    position: relative;
-    z-index: 2;
-}
-
-/* ホバーアニメーション用レイヤー */
-.term-button-container .stButton > button::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: #CCFFFF;          /* アニメーションカラー */
-    transform: translateX(-96%);
-    transition: transform .5s ease-in-out;
-    z-index: 1;
-}
-
-/* ホバー時に左からスライドしてくる */
-.term-button-container .stButton > button:hover::before {
-    transform: translateX(0%);
-}
-
-/* ホバー時のテキスト色（少し濃く） */
-.term-button-container .stButton > button:hover {
-    color: #111827;
 }
 </style>
 """,
@@ -909,6 +863,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
