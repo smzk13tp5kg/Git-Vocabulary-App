@@ -713,12 +713,15 @@ Git やこの辞典を使って気づいたこと・疑問点・
 """
         )
 
+        # ① テキストエリア
         new_note = st.text_area(
             "新しい学習メモを入力",
             value=st.session_state.learning_note_input,
             height=150,
         )
 
+        # ②～④ ボタンを .quiz-action でラップ
+        st.markdown('<div class="quiz-action">', unsafe_allow_html=True)
         if st.button("✏️ ノートを保存"):
             if new_note.strip():
                 save_learning_note_to_supabase(new_note.strip())
@@ -726,6 +729,7 @@ Git やこの辞典を使って気づいたこと・疑問点・
                 st.session_state.learning_note_input = ""
             else:
                 st.warning("テキストを入力してください。")
+        st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("---")
         st.markdown("#### 📚 ノート履歴（新しい順 最大50件）")
@@ -742,6 +746,7 @@ Git やこの辞典を使って気づいたこと・疑問点・
                     date_str = f"ID: {row.get('id', '?')}"
                 st.markdown(f"**{date_str}**  \n{row.get('note_text', '')}")
                 st.markdown("---")
+
 
 # ==============================
 # クイズに挑戦モード
@@ -872,6 +877,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
