@@ -104,42 +104,6 @@ st.markdown(
     font-size: 0.875rem;
     flex-shrink: 0;
 }
-st.markdown(
-    """
-<style>
-.block-container {
-    max-width: 1600px;
-}
-
-/* ……中略（既存CSS）…… */
-
-/* カテゴリーヘッダー */
-.category-header {
-    color: #6b7280;
-    font-size: 0.875rem;
-    font-weight: 600;
-    margin-top: 1.5rem;
-    margin-bottom: 0.5rem;
-}
-
-/* ワークフローステップ */
-.workflow-step {
-    display: flex;
-    gap: 0.75rem;
-    margin-bottom: 0.75rem;
-}
-.step-number {
-    width: 1.5rem;
-    height: 1.5rem;
-    background-color: #dbeafe;
-    color: #2563eb;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.875rem;
-    flex-shrink: 0;
-}
 
 /* ▼▼ 用語選択ボタン（中央カラム）のカスタムスタイル ▼▼ */
 .term-button-container .stButton {
@@ -194,10 +158,6 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-</style>
-""",
-    unsafe_allow_html=True,
-)
 
 # ==============================
 # 用語データ
@@ -834,6 +794,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
