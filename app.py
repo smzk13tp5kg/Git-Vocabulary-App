@@ -574,13 +574,12 @@ if mode == "辞書モード":
             st.subheader("📋 用語一覧")
             st.caption(f"{len(filtered_terms)} 件ヒット")
 
-            list_mode = st.radio(
-                "表示順",
-                options=["カテゴリ別", "名前順"],
-                horizontal=True,
-                key="list_mode",
-            )
-
+list_mode = st.radio(
+    "表示順",
+    options=["カテゴリ別", "名前順"],
+    horizontal=True,
+    key="dict_list_mode",  # ← ユニークなキー名に変更
+)
             # ▼ カスタムスタイル用コンテナ（青ボタン用） ▼
             st.markdown(
                 '<div class="term-button-container">',
@@ -921,5 +920,6 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
