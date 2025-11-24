@@ -163,7 +163,9 @@ def inject_flat_button_css():
         """
 <style>
 /* クイズ系アクションボタン共通スタイル */
-.stButton > button {
+/* 通常ボタン(st.button) と フォーム送信ボタン(st.form_submit_button) の両方を対象にする */
+.stButton > button,
+.stFormSubmitButton > button {
   font-size: 1.6rem;
   font-weight: 700;
   line-height: 1.5;
@@ -185,13 +187,15 @@ def inject_flat_button_css():
 }
 
 /* ラベルを前面に出す（アニメレイヤーより上） */
-.stButton > button > div {
+.stButton > button > div,
+.stFormSubmitButton > button > div {
   position: relative;
   z-index: 1;
 }
 
 /* ▼▼ ここが a.btn-flat の書き換え版 ▼▼ */
-.stButton > button::before {
+.stButton > button::before,
+.stFormSubmitButton > button::before {
   content: '';
   position: absolute;
   top: 0;
@@ -204,13 +208,15 @@ def inject_flat_button_css():
   z-index: 0;
 }
 
-.stButton > button:hover::before {
+.stButton > button:hover::before,
+.stFormSubmitButton > button:hover::before {
   transform: translateX(0%);
 }
 </style>
         """,
         unsafe_allow_html=True,
     )
+
 
 
 # ==============================
@@ -850,6 +856,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
