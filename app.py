@@ -118,19 +118,19 @@ st.markdown(
 /* ▼▼ デフォルト：全ての st.button / st.form_submit_button を黒＋ピンクに ▼▼ */
 .stButton > button,
 .stFormSubmitButton > button {
-  font-size: 1.6rem;
+  font-size: 1.0rem;
   font-weight: 700;
   line-height: 1.5;
   position: relative;
   display: inline-block;
-  padding: 1.0rem 2.5rem;
+  padding: 0.7rem 1.8rem;
   cursor: pointer;
   user-select: none;
   transition: all 0.3s;
   text-align: center;
   vertical-align: middle;
   text-decoration: none;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.05em;
   color: #fff;
   border-radius: 0.5rem;
   background: #000;
@@ -166,7 +166,6 @@ st.markdown(
 }
 
 /* ▼▼ 辞書ビュー用：用語一覧ボタン（AliceBlue / Azure）に上書き ▼▼ */
-/* term-button-container 内の st.button だけ青系で上書きする */
 .term-button-container .stButton > button {
     position: relative;
     width: 100%;
@@ -563,97 +562,483 @@ if mode == "辞書モード":
     tab_git, tab_dict, tab_table, tab_memo = st.tabs(
         ["📖 Gitとは？", "📋 辞書ビュー", "📊 一覧表", "📝 ノート"]
     )
+
     # --- Gitとは？ビュー ---
-    # --- 辞書ビュー ---
-    with tab_dict:
-        # 左右 1:2 の2カラム
-        col_left, col_right = st.columns([1, 2])
+    with tab_git:
+        st.markdown(
+            """
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
-        # 左カラム：用語一覧（ボタン）
-        with col_left:
-            st.subheader("📋 用語一覧")
-            st.caption(f"{len(filtered_terms)} 件ヒット")
+.git-book-root {
+    font-family: 'Noto Sans JP', sans-serif;
+    background: linear-gradient(135deg, #2c1810 0%, #1a0f08 100%);
+    color: #f4e4c1;
+    line-height: 1.8;
+    padding: 20px;
+}
 
-list_mode = st.radio(
-    "表示順",
-    options=["カテゴリ別", "名前順"],
-    horizontal=True,
-    key="dict_list_mode",  # ← ユニークなキー名に変更
-)
-            # ▼ カスタムスタイル用コンテナ（青ボタン用） ▼
-            st.markdown(
-                '<div class="term-button-container">',
-                unsafe_allow_html=True,
-            )
+.git-book-root * {
+    box-sizing: border-box;
+}
 
-            if list_mode == "名前順":
-                terms_for_view = sorted(filtered_terms, key=lambda t: t["name"])
-                for term in terms_for_view:
-                    if st.button(
-                        f"{term['name']}：{term['short_description']}",
-                        key=f"term_{term['id']}",
-                        use_container_width=True,
-                    ):
-                        st.session_state.selected_term_id = term["id"]
-            else:
-                for category in CATEGORIES:
-                    cat_terms = [
-                        t for t in filtered_terms if t["category"] == category
-                    ]
-                    if not cat_terms:
-                        continue
+/* 以下、このビュー専用の装飾 */
+.book-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: linear-gradient(to bottom, #3d2817 0%, #2a1810 100%);
+    border: 8px ridge #8b6914;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8),
+                inset 0 0 30px rgba(0, 0, 0, 0.3);
+    padding: 40px;
+    position: relative;
+}
 
-                    st.markdown(
-                        f"<div class='category-header'>{category}</div>",
-                        unsafe_allow_html=True,
-                    )
-                    for term in cat_terms:
-                        if st.button(
-                            f"{term['name']}：{term['short_description']}",
-                            key=f"term_{term['id']}",
-                            use_container_width=True,
-                        ):
-                            st.session_state.selected_term_id = term["id"]
-                            break
+.book-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><text x="10" y="20" font-size="12" fill="rgba(139,105,20,0.05)" font-family="serif">📜</text></svg>');
+    opacity: 0.1;
+    pointer-events: none;
+}
 
-            st.markdown("</div>", unsafe_allow_html=True)
+.title-page {
+    text-align: center;
+    padding: 60px 20px;
+    border-bottom: 3px double #8b6914;
+    margin-bottom: 50px;
+    background: radial-gradient(ellipse at center, rgba(139,105,20,0.1) 0%, transparent 70%);
+}
 
-        # 右カラム：用語詳細
-        with col_right:
-            selected_term = next(
-                (t for t in TERMS if t["id"] == st.session_state.selected_term_id),
-                TERMS[0],
-            )
+.main-title {
+    font-family: 'Cinzel', serif;
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #ffd700;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
 
-            st.subheader("📖 用語詳細")
-            st.markdown(
-                f"<span class='tag'>📌 {selected_term['category']}</span>",
-                unsafe_allow_html=True,
-            )
-            st.markdown(f"### {selected_term['name']}")
-            st.markdown(f"**一言説明：** {selected_term['short_description']}")
+.subtitle {
+    font-size: 1.2em;
+    color: #d4af37;
+    font-style: italic;
+    margin-bottom: 30px;
+}
 
-            st.markdown("---")
-            st.markdown("#### 詳細説明")
-            st.markdown(
-                f"""
-<div style="background-color: #f9fafb; padding: 1rem; border-radius: 0.5rem;">
-  <p style="color: #374151; line-height: 1.75; margin: 0;">
-    {selected_term['full_description']}
-  </p>
+.quest-goals {
+    background: rgba(0, 0, 0, 0.3);
+    border: 2px solid #8b6914;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 30px 0;
+}
+
+.quest-goals h3 {
+    color: #ffd700;
+    margin-bottom: 15px;
+    font-size: 1.3em;
+    text-align: center;
+}
+
+.quest-goals ul {
+    list-style: none;
+    padding-left: 0;
+}
+
+.quest-goals li {
+    padding: 8px 0 8px 30px;
+    position: relative;
+}
+
+.quest-goals li::before {
+    content: '⚔️';
+    position: absolute;
+    left: 0;
+}
+
+.chapter {
+    margin: 50px 0;
+    padding: 30px;
+    background: rgba(61, 40, 23, 0.6);
+    border: 3px solid #8b6914;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.chapter-number {
+    position: absolute;
+    top: -20px;
+    left: 20px;
+    background: linear-gradient(135deg, #8b6914 0%, #d4af37 100%);
+    color: #1a0f08;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.9em;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+.chapter h2 {
+    font-family: 'Cinzel', serif;
+    color: #ffd700;
+    font-size: 1.8em;
+    margin: 20px 0;
+    text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.6);
+}
+
+.skill-box {
+    background: rgba(0, 0, 0, 0.4);
+    border-left: 4px solid #d4af37;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 5px;
+}
+
+.skill-box h3 {
+    color: #ffd700;
+    font-size: 1.3em;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.skill-box h3::before {
+    content: '📖';
+    font-size: 1.2em;
+}
+
+.why-box {
+    background: rgba(255, 215, 0, 0.1);
+    border: 2px dashed #8b6914;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 5px;
+}
+
+.why-box strong {
+    color: #ffd700;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.example-box {
+    background: rgba(42, 24, 16, 0.8);
+    border: 2px solid #5a3a1a;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 5px;
+    font-style: italic;
+}
+
+.example-box strong {
+    color: #d4af37;
+    display: block;
+    margin-bottom: 10px;
+    font-style: normal;
+}
+
+.code-scroll {
+    background: #1a1410;
+    border: 2px solid #8b6914;
+    padding: 15px;
+    margin: 15px 0;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+    color: #7ed957;
+    overflow-x: auto;
+    position: relative;
+}
+
+.code-scroll::before {
+    content: '⌨️ 魔法の呪文';
+    display: block;
+    color: #8b6914;
+    font-size: 0.85em;
+    margin-bottom: 10px;
+    font-family: 'Noto Sans JP', sans-serif;
+}
+
+.mentor-tip {
+    background: linear-gradient(135deg, rgba(139, 105, 20, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
+    border: 2px solid #d4af37;
+    padding: 20px;
+    margin: 20px 0;
+    border-radius: 8px;
+    position: relative;
+}
+
+.mentor-tip::before {
+    content: '🧙‍♂️ メンターの助言';
+    display: block;
+    color: #ffd700;
+    font-weight: 700;
+    margin-bottom: 10px;
+    font-size: 1.1em;
+}
+
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 30px 0;
+    background: rgba(0, 0, 0, 0.3);
+    border: 3px solid #8b6914;
+}
+
+.summary-table th {
+    background: linear-gradient(135deg, #8b6914 0%, #5a3a1a 100%);
+    color: #ffd700;
+    padding: 15px;
+    text-align: left;
+    font-weight: 700;
+    border: 1px solid #d4af37;
+}
+
+.summary-table td {
+    padding: 12px;
+    border: 1px solid #5a3a1a;
+}
+
+.summary-table tr:nth-child(even) {
+    background: rgba(42, 24, 16, 0.4);
+}
+
+.conclusion {
+    background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+    border: 3px double #8b6914;
+    padding: 40px;
+    margin: 50px 0;
+    text-align: center;
+    border-radius: 10px;
+}
+
+.conclusion h2 {
+    font-family: 'Cinzel', serif;
+    color: #ffd700;
+    font-size: 2em;
+    margin-bottom: 20px;
+}
+
+.workflow-steps {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 30px 0;
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #d4af37;
+}
+
+.workflow-steps span {
+    background: rgba(139, 105, 20, 0.3);
+    padding: 10px 15px;
+    border-radius: 5px;
+    border: 2px solid #8b6914;
+}
+
+.arrow {
+    color: #ffd700;
+    font-size: 1.5em;
+}
+
+@media (max-width: 768px) {
+    .book-container {
+        padding: 20px;
+    }
+
+    .main-title {
+        font-size: 1.8em;
+    }
+
+    .chapter {
+        padding: 20px;
+    }
+
+    .summary-table {
+        font-size: 0.9em;
+    }
+}
+</style>
+            """,
+            unsafe_allow_html=True,
+        )
+
+        st.markdown(
+            """
+<div class="git-book-root">
+  <div class="book-container">
+    <div class="title-page">
+        <div class="main-title">⚔️ チーム開発の冒険 ⚔️</div>
+        <div class="subtitle">新機能追加ストーリーで学ぶGitHubワークフロー</div>
+
+        <div class="quest-goals">
+            <h3>🗺️ この冒険で得られる知識</h3>
+            <ul>
+                <li>チーム開発におけるGitHubの基本的な操作手順</li>
+                <li>各操作（クローン、ブランチ、コミットなど）の目的と重要性</li>
+                <li>安全で効率的な共同作業の全体像</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="chapter">
+        <div class="chapter-number">序章</div>
+        <h2>冒険の始まり</h2>
+        <p>ようこそ、勇敢なる開発者よ。あなたは今、ソフトウェア開発の世界という壮大な冒険の入り口に立っています。</p>
+        <p style="margin-top: 20px;">舞台は、成長の時を迎えた架空のプロジェクト<strong style="color: #ffd700;">「myアプリ」</strong>。この小さな開発チームに、ある日重要なミッションが舞い込みました。</p>
+        <p style="margin-top: 20px; font-size: 1.2em; color: #d4af37; text-align: center; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 5px;">
+            <strong>「ユーザーが安全にサービスを利用できるように、<br>新しいログインページを追加せよ」</strong>
+        </p>
+        <p style="margin-top: 20px;">この物語は、一人の開発者がこのミッションに挑む過程を通じて、チーム開発の強力な武器である<strong style="color: #ffd700;">GitHub</strong>の力を学んでいく冒険譚です。</p>
+    </div>
+
+    <div class="chapter">
+        <div class="chapter-number">第1章</div>
+        <h2>🗝️ プロジェクトへの参加「clone」</h2>
+        <p>物語は、あなたが「myアプリ」開発チームに新しく参加するところから始まります。最初の任務は、プロジェクトの全体像を把握し、開発を始める準備をすること。そのために、GitHub上にあるプロジェクトの設計図を自分の手元に持ってくる必要があります。</p>
+
+        <div class="skill-box">
+            <h3>clone（クローン）とは？</h3>
+            <p>GitHubに保存されているプロジェクト（リモートリポジトリ）の内容を、まるごとあなたのパソコンにコピーする魔法です。重要なのは、ただのコピーではなく、元のリモートリポジトリとの「接続情報」も一緒に保持される点です。</p>
+        </div>
+
+        <div class="why-box">
+            <strong>🤔 なぜ必要？</strong>
+            <p>初めてプロジェクトに参加するときは、まずリモート（GitHub）にあるコードを手元に持ってこなければ、コードを編集したり動かしたりすることができません。cloneは、そのための最初のステップであり、これによってローカルでの変更を後でリモートに同期させることができるようになります。</p>
+        </div>
+
+        <div class="example-box">
+            <strong>📚 例えるなら…</strong>
+            <p>学校の教科書を先生が黒板に書いてくれたとします。それをあなたのノートに書き写す作業、それがcloneです。これで、あなた専用の教科書が手に入ります。</p>
+        </div>
+
+        <div class="code-scroll">
+git clone https://github.com/team/my-app.git
+        </div>
+
+        <p style="margin-top: 20px; color: #d4af37;">✨ これで、あなたのパソコンに「myアプリ」の完全なコピーが作成されました。いよいよ開発作業に取り掛かる準備が整いましたね。</p>
+    </div>
+
+    <div class="chapter">
+        <div class="chapter-number">第2章</div>
+        <h2>🌿 自分の作業場所の確保「branch」</h2>
+        <p>プロジェクトのコードを手に入れたあなたに、リーダーから「ログインページの作成」という具体的なタスクが任されました。しかし、チームの他のメンバーも、それぞれ別の機能を追加したり、バグを修正したりしています。</p>
+
+        <div class="skill-box">
+            <h3>branch（ブランチ）とは？</h3>
+            <p>メインのコード（mainブランチ）とは別の「コピー」を作成して、その中で新しい機能を開発したり修正を行ったりするための仕組みです。このコピーのことを「ブランチ」と呼びます。</p>
+        </div>
+
+        <div class="why-box">
+            <strong>🤔 なぜ必要？</strong>
+            <p>mainブランチは、常に正常に動作する「完成版」のコード、つまりチームの<strong style="color: #ffd700;">「信頼できる唯一の情報源（Source of Truth）」</strong>として扱われます。ここを直接変更すると他メンバーに大きな影響を与えてしまうため、隔離された作業環境が必要です。</p>
+        </div>
+
+        <div class="example-box">
+            <strong>📚 例えるなら…</strong>
+            <p>先生が宿題のプリント（main）を配ったとき、あなたがコピーを取ってそのコピーに答えを書くイメージです。本物は汚さずに、自分のコピーの上で安心して作業ができます。</p>
+        </div>
+
+        <div class="code-scroll">
+git branch feature/add-login-page
+git checkout feature/add-login-page
+        </div>
+
+        <div class="mentor-tip">
+            実際の開発現場では、上の2つのコマンドを一つにまとめた
+            <code style="color: #7ed957;">git checkout -b &lt;ブランチ名&gt;</code>
+            がよく使われます。ブランチの作成と移動を一度に行ってくれる便利な呪文です。
+        </div>
+
+        <p style="margin-top: 20px; color: #d4af37;">✨ これで、feature/add-login-pageという自分だけの作業スペースを手に入れました。ここでの変更は、メインのコードには一切影響しません。</p>
+    </div>
+
+    <div class="chapter">
+        <div class="chapter-number">第3章</div>
+        <h2>📝 作業内容の記録「commit」</h2>
+        <p>ログインフォームの基本部分ができたので、ここで一度、作業内容を歴史として刻みます。</p>
+
+        <div class="skill-box">
+            <h3>commit（コミット）とは？</h3>
+            <p>ファイルへの変更を保存する操作であり、「いつ・誰が・何を・なぜ」変更したかをメッセージとして残すことができます。</p>
+        </div>
+
+        <div class="why-box">
+            <strong>🤔 なぜ必要？</strong>
+            <p>コミットをこまめに行うことで、問題が起きても過去の状態に戻ることができ、またチームメンバーが変更の意図を理解しやすくなります。</p>
+        </div>
+
+        <div class="code-scroll">
+git add .
+git commit -m "ログインフォームの基本構造を追加"
+        </div>
+
+        <p style="margin-top: 20px; color: #d4af37;">✨ これで、あなたの作業内容が一つの「章」として記録されました。</p>
+    </div>
+
+    <div class="chapter">
+        <div class="chapter-number">第4章</div>
+        <h2>📤 変更内容の共有「push」</h2>
+        <p>ローカルに記録した変更を、チーム全員が見られるようにGitHubへ届けます。</p>
+
+        <div class="skill-box">
+            <h3>push（プッシュ）とは？</h3>
+            <p>自分のパソコンで保存したコミットを、GitHubのリモートリポジトリに送信する操作です。</p>
+        </div>
+
+        <div class="example-box">
+            <strong>📚 例えるなら…</strong>
+            <p>自分のノートにまとめた宿題を、先生に提出するイメージです。提出して初めて、先生（チーム）が内容を確認できます。</p>
+        </div>
+
+        <div class="code-scroll">
+git push origin feature/add-login-page
+        </div>
+    </div>
+
+    <div class="chapter">
+        <div class="chapter-number">第5章〜第7章</div>
+        <h2>🔍 レビュー・統合・最新化（Pull Request / Merge / Pull）</h2>
+        <p>この先は、Pull Requestでレビューを依頼し、Mergeでmainに統合し、最後にPullで全員が最新状態を取り込む流れです。</p>
+        <p>詳しくは、実際のプロジェクトで「小さく試しながら」身につけていきましょう。</p>
+    </div>
+
+    <div class="conclusion">
+        <h2>黄金のワークフロー</h2>
+        <div class="workflow-steps">
+            <span>Clone</span><span class="arrow">→</span>
+            <span>Branch</span><span class="arrow">→</span>
+            <span>Commit</span><span class="arrow">→</span>
+            <span>Push</span><span class="arrow">→</span>
+            <span>Pull Request</span><span class="arrow">→</span>
+            <span>Merge</span><span class="arrow">→</span>
+            <span>Pull</span>
+        </div>
+        <p>この流れこそが、現代のチーム開発における「冒険の基本フォーム」です。<br>少しずつ繰り返しながら、自分の手に馴染ませていきましょう。</p>
+    </div>
+
+  </div>
 </div>
-""",
-                unsafe_allow_html=True,
-            )
-
-
+            """,
+            unsafe_allow_html=True,
+        )
 
     # --- 辞書ビュー ---
     with tab_dict:
         # 左右 1:2 の2カラム
         col_left, col_right = st.columns([1, 2])
 
-        # 左カラム：用語一覧（ボタン）
+        # 左カラム：用語一覧（青ボタン）
         with col_left:
             st.subheader("📋 用語一覧")
             st.caption(f"{len(filtered_terms)} 件ヒット")
@@ -662,14 +1047,9 @@ list_mode = st.radio(
                 "表示順",
                 options=["カテゴリ別", "名前順"],
                 horizontal=True,
-                key="list_mode",
             )
 
-            # ▼ カスタムスタイル用コンテナ（青ボタン用） ▼
-            st.markdown(
-                '<div class="term-button-container">',
-                unsafe_allow_html=True,
-            )
+            st.markdown('<div class="term-button-container">', unsafe_allow_html=True)
 
             if list_mode == "名前順":
                 terms_for_view = sorted(filtered_terms, key=lambda t: t["name"])
@@ -730,7 +1110,6 @@ list_mode = st.radio(
 """,
                 unsafe_allow_html=True,
             )
-
 
     # --- 一覧表 ---
     with tab_table:
@@ -759,14 +1138,13 @@ Git やこの辞典を使って気づいたこと・疑問点・
 """
         )
 
-        # テキストエリア
         new_note = st.text_area(
             "新しい学習メモを入力",
             value=st.session_state.learning_note_input,
             height=150,
         )
 
-        # 「✏️ ノートを保存」ボタン（黒＋ピンク：デフォルトスタイル）
+        # 黒＋ピンクボタン（デフォルトスタイル）
         if st.button("✏️ ノートを保存"):
             if new_note.strip():
                 save_learning_note_to_supabase(new_note.strip())
@@ -823,7 +1201,7 @@ elif mode == "クイズに挑戦":
             st.session_state.quiz_answers[q["id"]] = user_answer
             st.write("---")
 
-        # 「採点する」ボタン（黒＋ピンク：デフォルトスタイル）
+        # 黒＋ピンクボタン（デフォルトスタイル）
         if st.button("採点する"):
             score = 0
             results = []
@@ -891,7 +1269,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
 
         explanation = st.text_area("解説（任意）", height=120)
 
-        # 「この内容でクイズを登録」ボタン（黒＋ピンク：デフォルトスタイル）
+        # 黒＋ピンクボタン（デフォルトスタイル）
         submitted = st.form_submit_button("この内容でクイズを登録")
 
     if submitted:
@@ -920,6 +1298,3 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
-
-
-
