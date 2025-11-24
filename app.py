@@ -563,10 +563,11 @@ if mode == "辞書モード":
         ["📖 Gitとは？", "📋 辞書ビュー", "📊 一覧表", "📝 ノート"]
     )
 
-    # --- Gitとは？ビュー ---
-    with tab_git:
-        st.markdown(
-            """
+# --- Gitとは？ビュー ---
+with tab_git:
+    # ① CSS
+    st.markdown(
+        """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
@@ -582,7 +583,7 @@ if mode == "辞書モード":
     box-sizing: border-box;
 }
 
-/* 以下、このビュー専用の装飾 */
+/* 本全体の見た目 */
 .book-container {
     max-width: 900px;
     margin: 0 auto;
@@ -607,6 +608,7 @@ if mode == "辞書モード":
     pointer-events: none;
 }
 
+/* タイトルページ */
 .title-page {
     text-align: center;
     padding: 60px 20px;
@@ -632,6 +634,7 @@ if mode == "辞書モード":
     margin-bottom: 30px;
 }
 
+/* クエストボックス */
 .quest-goals {
     background: rgba(0, 0, 0, 0.3);
     border: 2px solid #8b6914;
@@ -663,6 +666,7 @@ if mode == "辞書モード":
     left: 0;
 }
 
+/* 章ブロック */
 .chapter {
     margin: 50px 0;
     padding: 30px;
@@ -694,6 +698,7 @@ if mode == "辞書モード":
     text-shadow: 2px 2px 3px rgba(0, 0, 0, 0.6);
 }
 
+/* 説明ボックス */
 .skill-box {
     background: rgba(0, 0, 0, 0.4);
     border-left: 4px solid #d4af37;
@@ -746,6 +751,7 @@ if mode == "辞書モード":
     font-style: normal;
 }
 
+/* コマンドブロック */
 .code-scroll {
     background: #1a1410;
     border: 2px solid #8b6914;
@@ -767,6 +773,7 @@ if mode == "辞書モード":
     font-family: 'Noto Sans JP', sans-serif;
 }
 
+/* メンターの助言 */
 .mentor-tip {
     background: linear-gradient(135deg, rgba(139, 105, 20, 0.2) 0%, rgba(212, 175, 55, 0.1) 100%);
     border: 2px solid #d4af37;
@@ -785,6 +792,7 @@ if mode == "辞書モード":
     font-size: 1.1em;
 }
 
+/* まとめテーブル */
 .summary-table {
     width: 100%;
     border-collapse: collapse;
@@ -811,6 +819,7 @@ if mode == "辞書モード":
     background: rgba(42, 24, 16, 0.4);
 }
 
+/* 結論ブロック */
 .conclusion {
     background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
     border: 3px double #8b6914;
@@ -869,169 +878,169 @@ if mode == "辞書モード":
     }
 }
 </style>
-            """,
-            unsafe_allow_html=True,
-        )
+        """,
+        unsafe_allow_html=True,
+    )
 
-        st.markdown(
-            """
-<div class="git-book-root">
+    # ② HTML 本文
+    st.markdown(
+        """<div class="git-book-root">
   <div class="book-container">
     <div class="title-page">
-        <div class="main-title">⚔️ チーム開発の冒険 ⚔️</div>
-        <div class="subtitle">新機能追加ストーリーで学ぶGitHubワークフロー</div>
+      <div class="main-title">⚔️ チーム開発の冒険 ⚔️</div>
+      <div class="subtitle">新機能追加ストーリーで学ぶGitHubワークフロー</div>
 
-        <div class="quest-goals">
-            <h3>🗺️ この冒険で得られる知識</h3>
-            <ul>
-                <li>チーム開発におけるGitHubの基本的な操作手順</li>
-                <li>各操作（クローン、ブランチ、コミットなど）の目的と重要性</li>
-                <li>安全で効率的な共同作業の全体像</li>
-            </ul>
-        </div>
+      <div class="quest-goals">
+        <h3>🗺️ この冒険で得られる知識</h3>
+        <ul>
+          <li>チーム開発におけるGitHubの基本的な操作手順</li>
+          <li>各操作（クローン、ブランチ、コミットなど）の目的と重要性</li>
+          <li>安全で効率的な共同作業の全体像</li>
+        </ul>
+      </div>
     </div>
 
     <div class="chapter">
-        <div class="chapter-number">序章</div>
-        <h2>冒険の始まり</h2>
-        <p>ようこそ、勇敢なる開発者よ。あなたは今、ソフトウェア開発の世界という壮大な冒険の入り口に立っています。</p>
-        <p style="margin-top: 20px;">舞台は、成長の時を迎えた架空のプロジェクト<strong style="color: #ffd700;">「myアプリ」</strong>。この小さな開発チームに、ある日重要なミッションが舞い込みました。</p>
-        <p style="margin-top: 20px; font-size: 1.2em; color: #d4af37; text-align: center; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 5px;">
-            <strong>「ユーザーが安全にサービスを利用できるように、<br>新しいログインページを追加せよ」</strong>
-        </p>
-        <p style="margin-top: 20px;">この物語は、一人の開発者がこのミッションに挑む過程を通じて、チーム開発の強力な武器である<strong style="color: #ffd700;">GitHub</strong>の力を学んでいく冒険譚です。</p>
+      <div class="chapter-number">序章</div>
+      <h2>冒険の始まり</h2>
+      <p>ようこそ、勇敢なる開発者よ。あなたは今、ソフトウェア開発の世界という壮大な冒険の入り口に立っています。</p>
+      <p style="margin-top: 20px;">舞台は、成長の時を迎えた架空のプロジェクト<strong style="color: #ffd700;">「myアプリ」</strong>。この小さな開発チームに、ある日重要なミッションが舞い込みました。</p>
+      <p style="margin-top: 20px; font-size: 1.2em; color: #d4af37; text-align: center; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 5px;">
+        <strong>「ユーザーが安全にサービスを利用できるように、<br>新しいログインページを追加せよ」</strong>
+      </p>
+      <p style="margin-top: 20px;">この物語は、一人の開発者がこのミッションに挑む過程を通じて、チーム開発の強力な武器である<strong style="color: #ffd700;">GitHub</strong>の力を学んでいく冒険譚です。</p>
     </div>
 
     <div class="chapter">
-        <div class="chapter-number">第1章</div>
-        <h2>🗝️ プロジェクトへの参加「clone」</h2>
-        <p>物語は、あなたが「myアプリ」開発チームに新しく参加するところから始まります。最初の任務は、プロジェクトの全体像を把握し、開発を始める準備をすること。そのために、GitHub上にあるプロジェクトの設計図を自分の手元に持ってくる必要があります。</p>
+      <div class="chapter-number">第1章</div>
+      <h2>🗝️ プロジェクトへの参加「clone」</h2>
+      <p>物語は、あなたが「myアプリ」開発チームに新しく参加するところから始まります。最初の任務は、プロジェクトの全体像を把握し、開発を始める準備をすること。そのために、GitHub上にあるプロジェクトの設計図を自分の手元に持ってくる必要があります。</p>
 
-        <div class="skill-box">
-            <h3>clone（クローン）とは？</h3>
-            <p>GitHubに保存されているプロジェクト（リモートリポジトリ）の内容を、まるごとあなたのパソコンにコピーする魔法です。重要なのは、ただのコピーではなく、元のリモートリポジトリとの「接続情報」も一緒に保持される点です。</p>
-        </div>
+      <div class="skill-box">
+        <h3>clone（クローン）とは？</h3>
+        <p>GitHubに保存されているプロジェクト（リモートリポジトリ）の内容を、まるごとあなたのパソコンにコピーする魔法です。重要なのは、ただのコピーではなく、元のリモートリポジトリとの「接続情報」も一緒に保持される点です。</p>
+      </div>
 
-        <div class="why-box">
-            <strong>🤔 なぜ必要？</strong>
-            <p>初めてプロジェクトに参加するときは、まずリモート（GitHub）にあるコードを手元に持ってこなければ、コードを編集したり動かしたりすることができません。cloneは、そのための最初のステップであり、これによってローカルでの変更を後でリモートに同期させることができるようになります。</p>
-        </div>
+      <div class="why-box">
+        <strong>🤔 なぜ必要？</strong>
+        <p>初めてプロジェクトに参加するときは、まずリモート（GitHub）にあるコードを手元に持ってこなければ、コードを編集したり動かしたりすることができません。cloneは、そのための最初のステップであり、これによってローカルでの変更を後でリモートに同期させることができるようになります。</p>
+      </div>
 
-        <div class="example-box">
-            <strong>📚 例えるなら…</strong>
-            <p>学校の教科書を先生が黒板に書いてくれたとします。それをあなたのノートに書き写す作業、それがcloneです。これで、あなた専用の教科書が手に入ります。</p>
-        </div>
+      <div class="example-box">
+        <strong>📚 例えるなら…</strong>
+        <p>学校の教科書を先生が黒板に書いてくれたとします。それをあなたのノートに書き写す作業、それがcloneです。これで、あなた専用の教科書が手に入ります。</p>
+      </div>
 
-        <div class="code-scroll">
+      <div class="code-scroll">
 git clone https://github.com/team/my-app.git
-        </div>
+      </div>
 
-        <p style="margin-top: 20px; color: #d4af37;">✨ これで、あなたのパソコンに「myアプリ」の完全なコピーが作成されました。いよいよ開発作業に取り掛かる準備が整いましたね。</p>
+      <p style="margin-top: 20px; color: #d4af37;">✨ これで、あなたのパソコンに「myアプリ」の完全なコピーが作成されました。いよいよ開発作業に取り掛かる準備が整いましたね。</p>
     </div>
 
     <div class="chapter">
-        <div class="chapter-number">第2章</div>
-        <h2>🌿 自分の作業場所の確保「branch」</h2>
-        <p>プロジェクトのコードを手に入れたあなたに、リーダーから「ログインページの作成」という具体的なタスクが任されました。しかし、チームの他のメンバーも、それぞれ別の機能を追加したり、バグを修正したりしています。</p>
+      <div class="chapter-number">第2章</div>
+      <h2>🌿 自分の作業場所の確保「branch」</h2>
+      <p>プロジェクトのコードを手に入れたあなたに、リーダーから「ログインページの作成」という具体的なタスクが任されました。しかし、チームの他のメンバーも、それぞれ別の機能を追加したり、バグを修正したりしています。</p>
 
-        <div class="skill-box">
-            <h3>branch（ブランチ）とは？</h3>
-            <p>メインのコード（mainブランチ）とは別の「コピー」を作成して、その中で新しい機能を開発したり修正を行ったりするための仕組みです。このコピーのことを「ブランチ」と呼びます。</p>
-        </div>
+      <div class="skill-box">
+        <h3>branch（ブランチ）とは？</h3>
+        <p>メインのコード（mainブランチ）とは別の「コピー」を作成して、その中で新しい機能を開発したり修正を行ったりするための仕組みです。このコピーのことを「ブランチ」と呼びます。</p>
+      </div>
 
-        <div class="why-box">
-            <strong>🤔 なぜ必要？</strong>
-            <p>mainブランチは、常に正常に動作する「完成版」のコード、つまりチームの<strong style="color: #ffd700;">「信頼できる唯一の情報源（Source of Truth）」</strong>として扱われます。ここを直接変更すると他メンバーに大きな影響を与えてしまうため、隔離された作業環境が必要です。</p>
-        </div>
+      <div class="why-box">
+        <strong>🤔 なぜ必要？</strong>
+        <p>mainブランチは、常に正常に動作する「完成版」のコード、つまりチームの<strong style="color: #ffd700;">「信頼できる唯一の情報源（Source of Truth）」</strong>として扱われます。ここを直接変更すると他メンバーに大きな影響を与えてしまうため、隔離された作業環境が必要です。</p>
+      </div>
 
-        <div class="example-box">
-            <strong>📚 例えるなら…</strong>
-            <p>先生が宿題のプリント（main）を配ったとき、あなたがコピーを取ってそのコピーに答えを書くイメージです。本物は汚さずに、自分のコピーの上で安心して作業ができます。</p>
-        </div>
+      <div class="example-box">
+        <strong>📚 例えるなら…</strong>
+        <p>先生が宿題のプリント（main）を配ったとき、あなたがコピーを取ってそのコピーに答えを書くイメージです。本物は汚さずに、自分のコピーの上で安心して作業ができます。</p>
+      </div>
 
-        <div class="code-scroll">
+      <div class="code-scroll">
 git branch feature/add-login-page
 git checkout feature/add-login-page
-        </div>
+      </div>
 
-        <div class="mentor-tip">
-            実際の開発現場では、上の2つのコマンドを一つにまとめた
-            <code style="color: #7ed957;">git checkout -b &lt;ブランチ名&gt;</code>
-            がよく使われます。ブランチの作成と移動を一度に行ってくれる便利な呪文です。
-        </div>
+      <div class="mentor-tip">
+        実際の開発現場では、上の2つのコマンドを一つにまとめた
+        <code style="color: #7ed957;">git checkout -b &lt;ブランチ名&gt;</code>
+        がよく使われます。ブランチの作成と移動を一度に行ってくれる便利な呪文です。
+      </div>
 
-        <p style="margin-top: 20px; color: #d4af37;">✨ これで、feature/add-login-pageという自分だけの作業スペースを手に入れました。ここでの変更は、メインのコードには一切影響しません。</p>
+      <p style="margin-top: 20px; color: #d4af37;">✨ これで、feature/add-login-pageという自分だけの作業スペースを手に入れました。ここでの変更は、メインのコードには一切影響しません。</p>
     </div>
 
     <div class="chapter">
-        <div class="chapter-number">第3章</div>
-        <h2>📝 作業内容の記録「commit」</h2>
-        <p>ログインフォームの基本部分ができたので、ここで一度、作業内容を歴史として刻みます。</p>
+      <div class="chapter-number">第3章</div>
+      <h2>📝 作業内容の記録「commit」</h2>
+      <p>ログインフォームの基本部分ができたので、ここで一度、作業内容を歴史として刻みます。</p>
 
-        <div class="skill-box">
-            <h3>commit（コミット）とは？</h3>
-            <p>ファイルへの変更を保存する操作であり、「いつ・誰が・何を・なぜ」変更したかをメッセージとして残すことができます。</p>
-        </div>
+      <div class="skill-box">
+        <h3>commit（コミット）とは？</h3>
+        <p>ファイルへの変更を保存する操作であり、「いつ・誰が・何を・なぜ」変更したかをメッセージとして残すことができます。</p>
+      </div>
 
-        <div class="why-box">
-            <strong>🤔 なぜ必要？</strong>
-            <p>コミットをこまめに行うことで、問題が起きても過去の状態に戻ることができ、またチームメンバーが変更の意図を理解しやすくなります。</p>
-        </div>
+      <div class="why-box">
+        <strong>🤔 なぜ必要？</strong>
+        <p>コミットをこまめに行うことで、問題が起きても過去の状態に戻ることができ、またチームメンバーが変更の意図を理解しやすくなります。</p>
+      </div>
 
-        <div class="code-scroll">
+      <div class="code-scroll">
 git add .
 git commit -m "ログインフォームの基本構造を追加"
-        </div>
+      </div>
 
-        <p style="margin-top: 20px; color: #d4af37;">✨ これで、あなたの作業内容が一つの「章」として記録されました。</p>
+      <p style="margin-top: 20px; color: #d4af37;">✨ これで、あなたの作業内容が一つの「章」として記録されました。</p>
     </div>
 
     <div class="chapter">
-        <div class="chapter-number">第4章</div>
-        <h2>📤 変更内容の共有「push」</h2>
-        <p>ローカルに記録した変更を、チーム全員が見られるようにGitHubへ届けます。</p>
+      <div class="chapter-number">第4章</div>
+      <h2>📤 変更内容の共有「push」</h2>
+      <p>ローカルに記録した変更を、チーム全員が見られるようにGitHubへ届けます。</p>
 
-        <div class="skill-box">
-            <h3>push（プッシュ）とは？</h3>
-            <p>自分のパソコンで保存したコミットを、GitHubのリモートリポジトリに送信する操作です。</p>
-        </div>
+      <div class="skill-box">
+        <h3>push（プッシュ）とは？</h3>
+        <p>自分のパソコンで保存したコミットを、GitHubのリモートリポジトリに送信する操作です。</p>
+      </div>
 
-        <div class="example-box">
-            <strong>📚 例えるなら…</strong>
-            <p>自分のノートにまとめた宿題を、先生に提出するイメージです。提出して初めて、先生（チーム）が内容を確認できます。</p>
-        </div>
+      <div class="example-box">
+        <strong>📚 例えるなら…</strong>
+        <p>自分のノートにまとめた宿題を、先生に提出するイメージです。提出して初めて、先生（チーム）が内容を確認できます。</p>
+      </div>
 
-        <div class="code-scroll">
+      <div class="code-scroll">
 git push origin feature/add-login-page
-        </div>
+      </div>
     </div>
 
     <div class="chapter">
-        <div class="chapter-number">第5章〜第7章</div>
-        <h2>🔍 レビュー・統合・最新化（Pull Request / Merge / Pull）</h2>
-        <p>この先は、Pull Requestでレビューを依頼し、Mergeでmainに統合し、最後にPullで全員が最新状態を取り込む流れです。</p>
-        <p>詳しくは、実際のプロジェクトで「小さく試しながら」身につけていきましょう。</p>
+      <div class="chapter-number">第5章〜第7章</div>
+      <h2>🔍 レビュー・統合・最新化（Pull Request / Merge / Pull）</h2>
+      <p>この先は、Pull Requestでレビューを依頼し、Mergeでmainに統合し、最後にPullで全員が最新状態を取り込む流れです。</p>
+      <p>詳しくは、実際のプロジェクトで「小さく試しながら」身につけていきましょう。</p>
     </div>
 
     <div class="conclusion">
-        <h2>黄金のワークフロー</h2>
-        <div class="workflow-steps">
-            <span>Clone</span><span class="arrow">→</span>
-            <span>Branch</span><span class="arrow">→</span>
-            <span>Commit</span><span class="arrow">→</span>
-            <span>Push</span><span class="arrow">→</span>
-            <span>Pull Request</span><span class="arrow">→</span>
-            <span>Merge</span><span class="arrow">→</span>
-            <span>Pull</span>
-        </div>
-        <p>この流れこそが、現代のチーム開発における「冒険の基本フォーム」です。<br>少しずつ繰り返しながら、自分の手に馴染ませていきましょう。</p>
+      <h2>黄金のワークフロー</h2>
+      <div class="workflow-steps">
+        <span>Clone</span><span class="arrow">→</span>
+        <span>Branch</span><span class="arrow">→</span>
+        <span>Commit</span><span class="arrow">→</span>
+        <span>Push</span><span class="arrow">→</span>
+        <span>Pull Request</span><span class="arrow">→</span>
+        <span>Merge</span><span class="arrow">→</span>
+        <span>Pull</span>
+      </div>
+      <p>この流れこそが、現代のチーム開発における「冒険の基本フォーム」です。<br>少しずつ繰り返しながら、自分の手に馴染ませていきましょう。</p>
     </div>
 
   </div>
-</div>
-            """,
-            unsafe_allow_html=True,
-        )
+</div>""",
+        unsafe_allow_html=True,
+    )
+
 
     # --- 辞書ビュー ---
     with tab_dict:
@@ -1298,3 +1307,4 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
