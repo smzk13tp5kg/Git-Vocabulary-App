@@ -104,6 +104,96 @@ st.markdown(
     font-size: 0.875rem;
     flex-shrink: 0;
 }
+st.markdown(
+    """
+<style>
+.block-container {
+    max-width: 1600px;
+}
+
+/* ……中略（既存CSS）…… */
+
+/* カテゴリーヘッダー */
+.category-header {
+    color: #6b7280;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+/* ワークフローステップ */
+.workflow-step {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+}
+.step-number {
+    width: 1.5rem;
+    height: 1.5rem;
+    background-color: #dbeafe;
+    color: #2563eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+/* ▼▼ 用語選択ボタン（中央カラム）のカスタムスタイル ▼▼ */
+.term-button-container .stButton {
+    width: 100%;
+}
+
+.term-button-container .stButton > button {
+    position: relative;
+    width: 100%;
+    padding: 0.9rem 1.1rem;
+    border-radius: 12px;
+    border: 1px solid #CCFFFF;   /* 枠線：アニメーションカラーに合わせる */
+    background-color: #FFFFFF;    /* ベースカラー */
+    color: #111827;
+    text-align: left;
+    font-size: 0.90rem;
+    font-weight: 500;
+    overflow: hidden;             /* アニメーションをボタン内に閉じ込める */
+}
+
+/* ボタン内テキストを前面に出す */
+.term-button-container .stButton > button > div {
+    position: relative;
+    z-index: 2;
+}
+
+/* ホバーアニメーション用レイヤー */
+.term-button-container .stButton > button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #CCFFFF;          /* アニメーションカラー */
+    transform: translateX(-96%);
+    transition: transform .5s ease-in-out;
+    z-index: 1;
+}
+
+/* ホバー時に左からスライドしてくる */
+.term-button-container .stButton > button:hover::before {
+    transform: translateX(0%);
+}
+
+/* ホバー時のテキスト色（少し濃く） */
+.term-button-container .stButton > button:hover {
+    color: #111827;
+}
+</style>
+""",
+    unsafe_allow_html=True,
+)
+
 </style>
 """,
     unsafe_allow_html=True,
@@ -457,9 +547,11 @@ if mode == "辞書モード":
     tab_dict, tab_table, tab_memo = st.tabs(["📋 辞書ビュー", "📊 一覧表", "📝 ノート"])
 
     # --- 辞書ビュー ---
+    # --- 辞書ビュー ---
     with tab_dict:
         col_left, col_mid, col_right = st.columns([1.4, 1.2, 2])
 
+        # 左カラム：概要
         with col_left:
             st.subheader("🌿 Gitとは")
             st.markdown(
@@ -478,6 +570,7 @@ Gitは、ソースコードのバージョン管理システムです。
 """
                 )
 
+        # 中央カラム：用語一覧（★ここにスタイル適用★）
         with col_mid:
             st.subheader("📋 用語一覧")
             st.caption(f"{len(filtered_terms)} 件ヒット")
@@ -487,6 +580,12 @@ Gitは、ソースコードのバージョン管理システムです。
                 options=["カテゴリ別", "名前順"],
                 horizontal=True,
                 key="list_mode",
+            )
+
+            # ▼ カスタムスタイル用のコンテナで囲む ▼
+            st.markdown(
+                '<div class="term-button-container">',
+                unsafe_allow_html=True,
             )
 
             if list_mode == "名前順":
@@ -519,6 +618,10 @@ Gitは、ソースコードのバージョン管理システムです。
                             st.session_state.selected_term_id = term["id"]
                             break
 
+            # ▲ コンテナ終わり ▲
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        # 右カラム：用語詳細
         with col_right:
             selected_term = next(
                 (t for t in TERMS if t["id"] == st.session_state.selected_term_id),
@@ -545,6 +648,7 @@ Gitは、ソースコードのバージョン管理システムです。
 """,
                 unsafe_allow_html=True,
             )
+
 
     # --- 一覧表 ---
     with tab_table:
@@ -730,6 +834,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
