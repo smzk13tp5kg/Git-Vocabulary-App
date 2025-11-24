@@ -730,3 +730,63 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
+
+
+# ==============================
+# ボタンカスタマイズ
+# ==============================
+st.markdown("""
+<style>
+/* コンテナの位置調整（必要なら） */
+.custom-button-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* ボタン本体 */
+a.btn-flat {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  padding: 1.2rem 4rem;
+  color: #fff;
+  border-radius: 6px;
+  background: #2563eb; /* 既存アプリの青 (#2563eb) */
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity .2s ease;
+}
+
+/* テキスト */
+a.btn-flat span {
+  position: relative;
+  z-index: 2;
+}
+
+/* ホバーアニメーション部分 */
+a.btn-flat:before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  content: '';
+  transition: all .5s ease-in-out;
+  transform: translateX(-96%);
+  background: #eb6877; /* 既存アプリのピンク (#eb6877) */
+}
+
+/* ホバー時 */
+a.btn-flat:hover:before {
+  transform: translateX(0%);
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ボタンを表示（押したら Streamlit 側で処理可能）
+st.markdown("""
+<div class="custom-button-container">
+  <a href="#" class="btn-flat"><span>PUSH！</span></a>
+</div>
+""", unsafe_allow_html=True)
