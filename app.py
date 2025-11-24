@@ -110,12 +110,63 @@ st.markdown(
 )
 
 # ==============================
-# ボタン用カスタムCSS（辞書 + クイズ）
+# ボタン用カスタムCSS（デフォルト＝黒ピンク、辞書ボタンだけ青系）
 # ==============================
 st.markdown(
     """
 <style>
-/* ▼▼ 辞書ビュー用：用語一覧ボタン（AliceBlue / Azure） ▼▼ */
+/* ▼▼ デフォルト：全ての st.button / st.form_submit_button を黒＋ピンクに ▼▼ */
+.stButton > button,
+.stFormSubmitButton > button {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.5;
+  position: relative;
+  display: inline-block;
+  padding: 1.0rem 2.5rem;
+  cursor: pointer;
+  user-select: none;
+  transition: all 0.3s;
+  text-align: center;
+  vertical-align: middle;
+  text-decoration: none;
+  letter-spacing: 0.1em;
+  color: #fff;
+  border-radius: 0.5rem;
+  background: #000;
+  border: none;
+  overflow: hidden;
+}
+
+/* テキストを前面に出す */
+.stButton > button > div,
+.stFormSubmitButton > button > div {
+  position: relative;
+  z-index: 1;
+}
+
+/* 黒ボタン上のピンクスライドアニメ */
+.stButton > button::before,
+.stFormSubmitButton > button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 120%;
+  height: 120%;
+  transition: all .5s ease-in-out;
+  transform: translateX(-96%);
+  background: #eb6877;
+  z-index: 0;
+}
+
+.stButton > button:hover::before,
+.stFormSubmitButton > button:hover::before {
+  transform: translateX(0%);
+}
+
+/* ▼▼ 辞書ビュー用：用語一覧ボタン（AliceBlue / Azure）に上書き ▼▼ */
+/* term-button-container 内の st.button だけ青系で上書きする */
 .term-button-container .stButton > button {
     position: relative;
     width: 100%;
@@ -130,13 +181,13 @@ st.markdown(
     overflow: hidden;
 }
 
-/* テキスト前面 */
+/* 用語ボタン内テキストを前面に */
 .term-button-container .stButton > button > div {
     position: relative;
     z-index: 2;
 }
 
-/* スライドアニメ：Azure */
+/* 用語ボタンのスライドアニメ：Azure */
 .term-button-container .stButton > button::before {
     content: "";
     position: absolute;
@@ -150,65 +201,14 @@ st.markdown(
     z-index: 1;
 }
 
-/* Hover時：スライドイン */
+/* Hover時：スライドイン（用語ボタン） */
 .term-button-container .stButton > button:hover::before {
     transform: translateX(0%);
 }
 
-/* Hover時テキスト色 */
+/* Hover時テキスト色（用語ボタン） */
 .term-button-container .stButton > button:hover {
     color: #111827;
-}
-
-/* ▼▼ クイズ系アクションボタン専用スタイル（黒＋ピンク） ▼▼ */
-/* .quiz-action 内にある st.button / st.form_submit_button だけ対象にする */
-.quiz-action .stButton > button,
-.quiz-action .stFormSubmitButton > button {
-  font-size: 1.6rem;
-  font-weight: 700;
-  line-height: 1.5;
-  position: relative;
-  display: inline-block;
-  padding: 1.5rem 6rem;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.3s;
-  text-align: center;
-  vertical-align: middle;
-  text-decoration: none;
-  letter-spacing: 0.1em;
-  color: #fff;
-  border-radius: 0;
-  background: #000;
-  border: none;
-  overflow: hidden;
-}
-
-/* ラベルを前面に出す（アニメレイヤーより上） */
-.quiz-action .stButton > button > div,
-.quiz-action .stFormSubmitButton > button > div {
-  position: relative;
-  z-index: 1;
-}
-
-/* スライドアニメ（ピンク） */
-.quiz-action .stButton > button::before,
-.quiz-action .stFormSubmitButton > button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transition: all .5s ease-in-out;
-  transform: translateX(-96%);
-  background: #eb6877;
-  z-index: 0;
-}
-
-.quiz-action .stButton > button:hover::before,
-.quiz-action .stFormSubmitButton > button:hover::before {
-  transform: translateX(0%);
 }
 </style>
 """,
@@ -585,7 +585,7 @@ Gitは、ソースコードのバージョン管理システムです。
 """
                 )
 
-        # 中央カラム：用語一覧（★ここに青系スタイル適用★）
+        # 中央カラム：用語一覧（青系スタイル）
         with col_mid:
             st.subheader("📋 用語一覧")
             st.caption(f"{len(filtered_terms)} 件ヒット")
@@ -698,8 +698,7 @@ Git やこの辞典を使って気づいたこと・疑問点・
             height=150,
         )
 
-        # 「ノートを保存」ボタン → 黒＋ピンク（.quiz-action）
-        st.markdown('<div class="quiz-action">', unsafe_allow_html=True)
+        # 「✏️ ノートを保存」ボタン（黒＋ピンク：デフォルトスタイル）
         if st.button("✏️ ノートを保存"):
             if new_note.strip():
                 save_learning_note_to_supabase(new_note.strip())
@@ -707,7 +706,6 @@ Git やこの辞典を使って気づいたこと・疑問点・
                 st.session_state.learning_note_input = ""
             else:
                 st.warning("テキストを入力してください。")
-        st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("---")
         st.markdown("#### 📚 ノート履歴（新しい順 最大50件）")
@@ -757,8 +755,7 @@ elif mode == "クイズに挑戦":
             st.session_state.quiz_answers[q["id"]] = user_answer
             st.write("---")
 
-        # 「採点する」ボタン → 黒＋ピンク（.quiz-action）
-        st.markdown('<div class="quiz-action">', unsafe_allow_html=True)
+        # 「採点する」ボタン（黒＋ピンク：デフォルトスタイル）
         if st.button("採点する"):
             score = 0
             results = []
@@ -793,7 +790,6 @@ elif mode == "クイズに挑戦":
                 if q.get("explanation"):
                     st.info(f"解説: {q['explanation']}")
                 st.write("---")
-        st.markdown("</div>", unsafe_allow_html=True)
 
 # ==============================
 # クイズ登録モード
@@ -827,10 +823,8 @@ git_quiz_questions テーブルにクイズ問題を登録します。
 
         explanation = st.text_area("解説（任意）", height=120)
 
-        # 「この内容でクイズを登録」ボタン → 黒＋ピンク（.quiz-action）
-        st.markdown('<div class="quiz-action">', unsafe_allow_html=True)
+        # 「この内容でクイズを登録」ボタン（黒＋ピンク：デフォルトスタイル）
         submitted = st.form_submit_button("この内容でクイズを登録")
-        st.markdown("</div>", unsafe_allow_html=True)
 
     if submitted:
         if not question_text.strip():
