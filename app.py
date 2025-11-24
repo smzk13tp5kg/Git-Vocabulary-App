@@ -563,11 +563,11 @@ if mode == "辞書モード":
         ["📖 Gitとは？", "📋 辞書ビュー", "📊 一覧表", "📝 ノート"]
     )
 
-# --- Gitとは？ビュー ---
-with tab_git:
-    # ① CSS
-    st.markdown(
-        """
+    # --- Gitとは？ビュー ---
+    with tab_git:
+        # CSS
+        st.markdown(
+            """
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
@@ -792,33 +792,6 @@ with tab_git:
     font-size: 1.1em;
 }
 
-/* まとめテーブル */
-.summary-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin: 30px 0;
-    background: rgba(0, 0, 0, 0.3);
-    border: 3px solid #8b6914;
-}
-
-.summary-table th {
-    background: linear-gradient(135deg, #8b6914 0%, #5a3a1a 100%);
-    color: #ffd700;
-    padding: 15px;
-    text-align: left;
-    font-weight: 700;
-    border: 1px solid #d4af37;
-}
-
-.summary-table td {
-    padding: 12px;
-    border: 1px solid #5a3a1a;
-}
-
-.summary-table tr:nth-child(even) {
-    background: rgba(42, 24, 16, 0.4);
-}
-
 /* 結論ブロック */
 .conclusion {
     background: radial-gradient(ellipse at center, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
@@ -872,19 +845,15 @@ with tab_git:
     .chapter {
         padding: 20px;
     }
-
-    .summary-table {
-        font-size: 0.9em;
-    }
 }
 </style>
-        """,
-        unsafe_allow_html=True,
-    )
+            """,
+            unsafe_allow_html=True,
+        )
 
-    # ② HTML 本文
-    st.markdown(
-        """<div class="git-book-root">
+        # HTML本文（ここが文字列1本で完結しているのがポイント）
+        st.markdown(
+            """<div class="git-book-root">
   <div class="book-container">
     <div class="title-page">
       <div class="main-title">⚔️ チーム開発の冒険 ⚔️</div>
@@ -1038,8 +1007,9 @@ git push origin feature/add-login-page
 
   </div>
 </div>""",
-        unsafe_allow_html=True,
-    )
+            unsafe_allow_html=True,
+        )
+
 
 
     # --- 辞書ビュー ---
@@ -1307,4 +1277,5 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
