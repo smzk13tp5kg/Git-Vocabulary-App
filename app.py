@@ -104,72 +104,64 @@ st.markdown(
     font-size: 0.875rem;
     flex-shrink: 0;
 }
-
-
-}
 </style>
 """,
     unsafe_allow_html=True,
 )
 
 def inject_flat_button_css():
-    st.markdown(
-        """
+st.markdown(
+    """
 <style>
-/* クイズ系アクションボタン共通スタイル */
-/* 通常ボタン(st.button) と フォーム送信ボタン(st.form_submit_button) の両方を対象にする */
-.stButton > button,
-.stFormSubmitButton > button {
-  font-size: 1.6rem;
-  font-weight: 700;
-  line-height: 1.5;
-  position: relative;
-  display: inline-block;
-  padding: 1.5rem 6rem;
-  cursor: pointer;
-  user-select: none;
-  transition: all 0.3s;
-  text-align: center;
-  vertical-align: middle;
-  text-decoration: none;
-  letter-spacing: 0.1em;
-  color: #fff;
-  border-radius: 0;
-  background: #000;
-  border: none;
-  overflow: hidden;
+/* ▼▼ 辞書モード用：フラットボタン（AliceBlue / Azure） ▼▼ */
+
+.term-button-container button {
+    position: relative;
+    width: 100% !important;
+    padding: 0.9rem 1.1rem !important;
+    border-radius: 12px !important;
+    border: 1px solid #F0FFFF !important;       /* Azure */
+    background-color: #F0F8FF !important;       /* AliceBlue */
+    color: #111827 !important;
+    text-align: left !important;
+    font-size: 0.90rem !important;
+    font-weight: 500 !important;
+    overflow: hidden !important;
 }
 
-/* ラベルを前面に出す（アニメレイヤーより上） */
-.stButton > button > div,
-.stFormSubmitButton > button > div {
-  position: relative;
-  z-index: 1;
+/* テキスト前面 */
+.term-button-container button > div {
+    position: relative;
+    z-index: 2;
 }
 
-/* ▼▼ ここが a.btn-flat の書き換え版 ▼▼ */
-.stButton > button::before,
-.stFormSubmitButton > button::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  transition: all .5s ease-in-out;
-  transform: translateX(-96%);
-  background: #eb6877;
-  z-index: 0;
+/* スライドアニメ：Azure */
+.term-button-container button::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #F0FFFF;             /* Azure */
+    transform: translateX(-96%);
+    transition: transform .5s ease-in-out;
+    z-index: 1;
 }
 
-.stButton > button:hover::before,
-.stFormSubmitButton > button:hover::before {
-  transform: translateX(0%);
+/* Hover時：スライドイン */
+.term-button-container button:hover::before {
+    transform: translateX(0%);
+}
+
+/* Hover時テキスト色 */
+.term-button-container button:hover {
+    color: #111827 !important;
 }
 </style>
-        """,
-        unsafe_allow_html=True,
-    )
+""",
+    unsafe_allow_html=True,
+)
 
 st.markdown(
     """
@@ -863,6 +855,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
