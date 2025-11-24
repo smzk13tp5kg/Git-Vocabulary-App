@@ -537,6 +537,8 @@ with st.sidebar:
 # 辞書モード
 # ==============================
 if mode == "辞書モード":
+    # クイズ用フラットボタンCSSをこのモードでも適用
+    inject_flat_button_css()
     # 検索バー
     search_col1, search_col2 = st.columns([3, 1])
 
@@ -865,6 +867,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
