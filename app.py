@@ -564,137 +564,91 @@ if mode == "辞書モード":
         ["📖 Gitとは？", "📋 辞書ビュー", "📊 一覧表", "📝 ノート"]
     )
     # --- Gitとは？ビュー ---
-    with tab_git:
-        st.subheader("チーム開発の冒険：新機能追加ストーリーで学ぶGitHubワークフロー")
-
-        st.markdown(
-            """
-### 導入：冒険の始まり
-
-皆さん、こんにちは。ソフトウェア開発の世界へようこそ。今日は、皆さんと一緒に一つの冒険に出かけたいと思います。
-
-舞台は、今まさに成長しようとしている架空のプロジェクト「myアプリ」。このアプリを開発する小さなチームに、ある日、新しいミッションが与えられました。それは**「ユーザーが安全にサービスを利用できるように、新しいログインページを追加する」**というものです。
-
-この物語は、一人の開発者がこのミッションに挑む過程を追いながら、チーム開発の強力な味方であるGitHubの基本的な機能が、実際の現場でどのように使われているのかを体験していくストーリーです。さあ、一緒に冒険を始めましょう！
-
-この物語を読み終える頃には、あなたは以下のことを学んでいるはずです。
-
-- チーム開発におけるGitHubの基本的な操作手順  
-- 各操作（クローン、ブランチ、コミットなど）の目的と重要性  
-- 安全で効率的な共同作業の全体像  
-
----
-
-### 第1章：プロジェクトへの参加「clone」
-
-物語は、あなたが「myアプリ」開発チームに新しく参加するところから始まります。最初の仕事は、プロジェクトの全体像を把握し、開発を始める準備をすること。そのために、まずはGitHub上にあるプロジェクトの"設計図"、つまりソースコードを自分のパソコンに持ってくる必要があります。
-
-**clone（クローン）とは？**  
-cloneとは、GitHubに保存されているプロジェクト（リモートリポジトリ）の内容を、まるごとあなたのパソコンにコピーする操作です。重要なのは、ただのコピーではなく、元のリモートリポジトリとの「接続情報」も一緒に保持される点です。
-
-- なぜ必要？  
-  初めてプロジェクトに参加するときは、まずリモート（GitHub）にあるコードを手元に持ってこなければ、コードを編集したり動かしたりすることができません。cloneは、そのための最初のステップであり、これによってローカルでの変更を後でリモートに同期させることができるようになります。
-
-- 例えるなら…  
-  学校の教科書を先生が黒板に書いてくれたとします。それをあなたのノートに書き写す作業、それがcloneです。これで、あなた専用の教科書が手に入ります。
-
----
-
-### 第2章：自分の作業場所の確保「branch」
-
-プロジェクトのコードを手に入れたあなたに、リーダーから「ログインページの作成」という具体的なタスクが任されました。しかし、チームの他のメンバーも、それぞれ別の機能を追加したり、バグを修正したりしています。
-
-**branch（ブランチ）とは？**  
-branchとは、メインのコード（mainブランチ）とは別の「コピー」を作成して、その中で新しい機能を開発したり修正を行ったりするための仕組みです。
-
-- なぜ必要？  
-  mainブランチは、常に正常に動作する「完成版」のコード＝**Source of Truth**として扱われます。ここを直接いじると、未完成の変更で他の人の作業に影響が出るため、隔離された作業場所が必要です。
-
-- 例えるなら…  
-  宿題プリント（main）のコピーを取って、そのコピーにだけ書き込むイメージです。本物は汚さずに済みます。
-
----
-
-### 第3章：作業内容の記録「commit」
-
-ログインフォームの基本ができたので、ここで一度作業を区切って記録します。
-
-**commit（コミット）とは？**  
-commitとは、ファイルへの変更を「いつ・誰が・何を・なぜ」変更したかという情報付きで記録する操作です。
-
-- なぜ必要？
-  1. 保険になる：問題が起きたら、過去の状態に戻せる  
-  2. 情報共有になる：誰が何をしたのか履歴として残る  
-
-- 例えるなら…  
-  作文の途中で「ここまで書いた」とメモを残して保存するイメージです。
-
----
-
-### 第4章：変更内容の共有「push」
-
-コミットした変更は、まだあなたのPCの中だけの記録です。チームに共有するためにGitHubへ送ります。
-
-**push（プッシュ）とは？**  
-ローカルのコミットをリモートリポジトリへ送信する操作です。
-
-- 例えるなら…  
-  自分のノートに解いた宿題を先生に提出するイメージです。
-
----
-
-### 第5章：レビュー依頼と統合の提案「pull request」
-
-ログインページが形になったので、mainへ取り込んでもらうためにレビューを依頼します。
-
-**pull request（プルリクエスト）とは？**  
-「このブランチの変更をmainに取り込んでよいか？」をチームに問うための仕組みで、コードレビューの場になります。
-
-- なぜ必要？  
-  バグの混入を防ぎ、チームで品質を担保するためです。
-
----
-
-### 第6章：新機能の統合「merge」
-
-レビューが終わり、承認されたらmainに統合します。
-
-**merge（マージ）とは？**  
-あるブランチの変更を別のブランチに取り込む操作です。
-
-- 例えるなら…  
-  先生が確認した宿題の解答が、クラス全員の教科書に正式に反映されるイメージです。
-
----
-
-### 第7章：最新状態への更新「pull」
-
-mainに新しい機能が取り込まれたら、他のメンバーも自分の環境を最新にします。
-
-**pull（プル）とは？**  
-リモートの最新の変更をローカルに取り込む操作です。  
-中身は `fetch`（取得）＋`merge`（統合）のショートカットです。
-
----
-
-### まとめ：Clone → Branch → Commit → Push → PR → Merge → Pull
-
-この流れが、チーム開発における**基本ワークフローの黄金パターン**です。
-
-- clone：プロジェクトに参加する  
-- branch：安全な作業場所を作る  
-- commit：変更を意味付きで記録する  
-- push：変更をチームに共有する  
-- pull request：レビューと合意形成の場  
-- merge：正式にプロジェクトへ統合  
-- pull：最新状態を全員で共有  
-
-この一連のサイクルを回すことで、チームは安全かつ効率的に開発を進めることができます。
-"""
-        )
-
-
     # --- 辞書ビュー ---
+    with tab_dict:
+        # 左右 1:2 の2カラム
+        col_left, col_right = st.columns([1, 2])
+
+        # 左カラム：用語一覧（ボタン）
+        with col_left:
+            st.subheader("📋 用語一覧")
+            st.caption(f"{len(filtered_terms)} 件ヒット")
+
+            list_mode = st.radio(
+                "表示順",
+                options=["カテゴリ別", "名前順"],
+                horizontal=True,
+                key="list_mode",
+            )
+
+            # ▼ カスタムスタイル用コンテナ（青ボタン用） ▼
+            st.markdown(
+                '<div class="term-button-container">',
+                unsafe_allow_html=True,
+            )
+
+            if list_mode == "名前順":
+                terms_for_view = sorted(filtered_terms, key=lambda t: t["name"])
+                for term in terms_for_view:
+                    if st.button(
+                        f"{term['name']}：{term['short_description']}",
+                        key=f"term_{term['id']}",
+                        use_container_width=True,
+                    ):
+                        st.session_state.selected_term_id = term["id"]
+            else:
+                for category in CATEGORIES:
+                    cat_terms = [
+                        t for t in filtered_terms if t["category"] == category
+                    ]
+                    if not cat_terms:
+                        continue
+
+                    st.markdown(
+                        f"<div class='category-header'>{category}</div>",
+                        unsafe_allow_html=True,
+                    )
+                    for term in cat_terms:
+                        if st.button(
+                            f"{term['name']}：{term['short_description']}",
+                            key=f"term_{term['id']}",
+                            use_container_width=True,
+                        ):
+                            st.session_state.selected_term_id = term["id"]
+                            break
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+        # 右カラム：用語詳細
+        with col_right:
+            selected_term = next(
+                (t for t in TERMS if t["id"] == st.session_state.selected_term_id),
+                TERMS[0],
+            )
+
+            st.subheader("📖 用語詳細")
+            st.markdown(
+                f"<span class='tag'>📌 {selected_term['category']}</span>",
+                unsafe_allow_html=True,
+            )
+            st.markdown(f"### {selected_term['name']}")
+            st.markdown(f"**一言説明：** {selected_term['short_description']}")
+
+            st.markdown("---")
+            st.markdown("#### 詳細説明")
+            st.markdown(
+                f"""
+<div style="background-color: #f9fafb; padding: 1rem; border-radius: 0.5rem;">
+  <p style="color: #374151; line-height: 1.75; margin: 0;">
+    {selected_term['full_description']}
+  </p>
+</div>
+""",
+                unsafe_allow_html=True,
+            )
+
+
+
     # --- 辞書ビュー ---
     with tab_dict:
         # 左右 1:2 の2カラム
@@ -967,4 +921,5 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
