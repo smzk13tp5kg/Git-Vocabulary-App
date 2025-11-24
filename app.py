@@ -907,8 +907,9 @@ git clone https://github.com/team/my-app.git
             </div>
 
             <div class="code-scroll">
-git branch feature/add-login-page
-git checkout feature/add-login-page
+git checkout -b feature/add-login-page
+# または
+git switch -c feature/add-login-page
             </div>
         </div>
 
@@ -1244,6 +1245,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
