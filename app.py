@@ -5,6 +5,7 @@ import streamlit as st
 import pandas as pd
 from dotenv import load_dotenv
 from supabase import create_client, Client
+import streamlit.components.v1 as components
 
 # ==============================
 # Supabase クライアント初期化
@@ -1161,6 +1162,7 @@ git_quiz_questions テーブルにクイズ問題を登録します。
     else:
         for q in latest_questions:
             st.markdown(f"- **{q['question_text']}**")
+
 
 
 
